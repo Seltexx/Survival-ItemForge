@@ -1,0 +1,36 @@
+{
+  "display": {
+    "icon": {
+      "id": "<ICON>"
+    },
+    "title": {
+      "text": "<TITLE>"
+    },
+    "description": {
+      "text": "<DESCRIPTION>"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "<FRAME>",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "get_diamond": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    ["get_diamond"]
+  ],
+  "rewards": {
+    "experience": 100,
+    "loot": [
+      "minecraft:air"
+    ],
+    "recipes": [
+      "minecraft:diamond_sword"
+    ]
+  },
+  "parent": "minecraft:story/root"
+}

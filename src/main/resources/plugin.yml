@@ -5,3 +5,7 @@ api-version: '1.21'
 authors: [ Seltex ]
 description: Developed by the RelaxoGames.de Development Team.
 website: relaxogames.de/development
+
+commands:
+  debug:
+    description: Help

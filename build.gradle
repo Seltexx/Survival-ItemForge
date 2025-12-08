@@ -14,10 +14,12 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    implementation 'com.github.koca2000:NoteBlockAPI:1.6.2'
     implementation("de.relaxogames:LingoAPI:inDev-1.7-RC01")
 }
 
@@ -55,16 +57,4 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
-}
-
-tasks.named('shadowJar') {
-    archiveClassifier.set('') // Shadow wird Haupt-JAR
-
-    // Eigene Bibliotheken relocaten
-    relocate("de.relaxogames.LingoAPI", "de.relaxogames.fraxure.libs.lingoapi")
-}
-
-// Build Task hängt von Shadow ab
-tasks.build {
-    dependsOn tasks.shadowJar
 }

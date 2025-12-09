@@ -1,0 +1,33 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:potion"
+    },
+    "title": {
+      "text": "Ist das Vape Liquid?"
+    },
+    "description": {
+      "text": "Bereite eine universal Tinktur zu."
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "tincture_explosion": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    ["tincture_explosion"]
+  ],
+  "rewards": {
+    "experience": 0,
+    "loot": [
+      "minecraft:air"
+    ]
+  },
+  "parent": "minecraft:nether/brew_potion/advancement_global_alchemist"
+}

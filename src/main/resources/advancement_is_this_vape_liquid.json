@@ -1,27 +1,27 @@
 {
   "display": {
     "icon": {
-      "id": "<ICON>"
+      "id": "minecraft:potion"
     },
     "title": {
-      "text": "<TITLE>"
+      "text": "Ist das Vape Liquid?"
     },
     "description": {
-      "text": "<DESCRIPTION>"
+      "text": "Bereite eine universal Tinktur zu."
     },
-    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
-    "frame": "<FRAME>",
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "get_diamond": {
+    "brewed_tincture": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
-    ["get_diamond"]
+    ["brewed_tincture"]
   ],
   "rewards": {
     "experience": 100,
@@ -32,5 +32,5 @@
       "minecraft:diamond_sword"
     ]
   },
-  "parent": "minecraft:story/root"
+  "parent": "minecraft:nether/brew_potion/is_this_vape_liquid"
 }

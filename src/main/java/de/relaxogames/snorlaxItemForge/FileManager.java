@@ -75,11 +75,22 @@ public class FileManager {
     }
 
     private static void loadAdvancements(){
-        File global_alchemist = new File(advancementFolder, "advancement_global_alchemist.json");
+        File brew_tincture = new File(advancementFolder, "advancement_is_this_vape_liquid.json");
         try {
-            if (!global_alchemist.exists()) {
-                InputStream in = ItemForge.getForge().getResource("advancement_global_alchemist.json");
-                Files.copy(in, global_alchemist.toPath());
+            if (!brew_tincture.exists()) {
+                InputStream in = ItemForge.getForge().getResource("advancement_is_this_vape_liquid.json");
+                Files.copy(in, brew_tincture.toPath());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+
+        File tincture_explodes = new File(advancementFolder, "advancement_tincture_explosion.json");
+        try {
+            if (!tincture_explodes.exists()) {
+                InputStream in = ItemForge.getForge().getResource("advancement_tincture_explosion.json");
+                Files.copy(in, tincture_explodes.toPath());
             }
         } catch (IOException e) {
             e.printStackTrace();

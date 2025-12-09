@@ -14,13 +14,14 @@ public final class Toast {
 
     private FileManager fileManager = new FileManager();
 
+    private final Player player;
     private Advancement advancement;
     private final NamespacedKey key;
     private final String icon;
     private final String message;
     private final Style style;
-
-    public Toast(NamespacedKey key, Advancement advancement, String icon, String message, Style style) {
+    private Toast(Player player, NamespacedKey key, Advancement advancement, String icon, String message, Style style) {
+        this.player = player;
         this.icon = icon;
         this.key = key;
         this.message = message;
@@ -28,7 +29,7 @@ public final class Toast {
         this.advancement = advancement;
     }
 
-    private void start(Player player){
+    public void kickoff(){
         createAdvancement();
         grantAdvancement(player);
 
@@ -51,15 +52,23 @@ public final class Toast {
     }
 
     private void grantAdvancement(Player player){
-        player.getAdvancementProgress(Bukkit.getAdvancement(key)).awardCriteria("get_diamond");
+        player.getAdvancementProgress(Bukkit.getAdvancement(key)).awardCriteria("brewed_tincture");
     }
 
     private void revokeAdvancement(Player player){
-        player.getAdvancementProgress(Bukkit.getAdvancement(key)).revokeCriteria("get_diamond");
+        player.getAdvancementProgress(Bukkit.getAdvancement(key)).revokeCriteria("brewed_tincture");
     }
 
     public static void displayTo(Player player, Advancement advancement, String icon, String message, Style style){
-        new Toast(new NamespacedKey(ItemForge.getForge(), UUID.randomUUID().toString()), advancement,  icon, message, style).start(player);
+        new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.GLOBAL_ALCHEMIST.fileName), advancement,  icon, message, style).kickoff();
+    }
+
+    public static void displayTo(Player player, Advancement advancement, String icon, String message, String trigger, Style style){
+        new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.GLOBAL_ALCHEMIST.fileName), advancement,  icon, message, style).kickoff();
+    }
+
+    public static Toast create(Player player, Advancement advancement, String icon, String message, Style style){
+        return new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.GLOBAL_ALCHEMIST.fileName), advancement,  icon, message, style);
     }
 
     public static enum Style{

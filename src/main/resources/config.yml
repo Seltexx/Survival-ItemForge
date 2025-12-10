@@ -1,3 +1,4 @@
 items:
   invisibility-tincture:
     max-uses: 3
+    max-cauldron-level: 3

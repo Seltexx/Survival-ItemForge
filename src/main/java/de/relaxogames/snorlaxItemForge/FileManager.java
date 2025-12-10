@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancement;
+import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -75,26 +76,17 @@ public class FileManager {
     }
 
     private static void loadAdvancements(){
-        File brew_tincture = new File(advancementFolder, "advancement_is_this_vape_liquid.json");
-        try {
-            if (!brew_tincture.exists()) {
-                InputStream in = ItemForge.getForge().getResource("advancement_is_this_vape_liquid.json");
-                Files.copy(in, brew_tincture.toPath());
+        for (Advancement advancement : Advancement.values()){
+            File brew_tincture = new File(advancementFolder,  advancement.getFileName() + ".json");
+            try {
+                if (!brew_tincture.exists()) {
+                    InputStream in = ItemForge.getForge().getResource(advancement.getFileName() + ".json");
+                    Files.copy(in, brew_tincture.toPath());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
-        File tincture_explodes = new File(advancementFolder, "advancement_tincture_explosion.json");
-        try {
-            if (!tincture_explodes.exists()) {
-                InputStream in = ItemForge.getForge().getResource("advancement_tincture_explosion.json");
-                Files.copy(in, tincture_explodes.toPath());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
         }
     }
 
@@ -102,10 +94,14 @@ public class FileManager {
         lingo.loadMessages(list);
     }
 
+    public int maxTincutureCauldronLevel(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getInt("items.invisibility-tincture.max-cauldron-level", 3);
+    }
 
     public int maxTincutureUses(){
         FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getInt("items.invisibility-tincture.max-uses");
+        return fc.getInt("items.invisibility-tincture.max-uses", 3);
     }
 
     public JsonObject readJSON(Advancement advancement){
@@ -115,5 +111,4 @@ public class FileManager {
             throw new RuntimeException(e);
         }
     }
-
 }

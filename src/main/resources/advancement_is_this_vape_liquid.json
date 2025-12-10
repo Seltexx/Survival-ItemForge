@@ -1,7 +1,14 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:potion"
+      "id": "minecraft:potion",
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:mundane",
+          "custom_color": 14542052,
+          "custom_name": "Universal Tinktur"
+        }
+      }
     },
     "title": {
       "text": "Ist das Vape Liquid?"
@@ -9,11 +16,12 @@
     "description": {
       "text": "Bereite eine universal Tinktur zu."
     },
-    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": false
+    "hidden": false,
+    "x": 1,
+    "y": 0
   },
   "criteria": {
     "brewed_tincture": {
@@ -21,16 +29,12 @@
     }
   },
   "requirements": [
-    ["brewed_tincture"]
+    [
+      "brewed_tincture"
+    ]
   ],
   "rewards": {
-    "experience": 100,
-    "loot": [
-      "minecraft:air"
-    ],
-    "recipes": [
-      "minecraft:diamond_sword"
-    ]
+    "experience": 100
   },
-  "parent": "minecraft:nether/brew_potion/is_this_vape_liquid"
+  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
 }

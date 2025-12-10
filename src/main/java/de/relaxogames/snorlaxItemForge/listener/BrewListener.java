@@ -1,16 +1,16 @@
 package de.relaxogames.snorlaxItemForge.listener;
 
-import com.destroystokyo.paper.ParticleBuilder;
 import de.relaxogames.api.Lingo;
 import de.relaxogames.api.interfaces.LingoPlayer;
 import de.relaxogames.api.interfaces.LingoUser;
+import de.relaxogames.languages.Locale;
 import de.relaxogames.languages.ServerColors;
+import de.relaxogames.snorlaxItemForge.FileManager;
 import de.relaxogames.snorlaxItemForge.ItemForge;
 import de.relaxogames.snorlaxItemForge.advancement.Advancement;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
-import de.relaxogames.snorlaxItemForge.advancement.Toast;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.entity.Player;
@@ -19,32 +19,36 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.BrewEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.inventory.BrewerInventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
-import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class BrewListener implements Listener {
 
+    private FileManager fileManager = new FileManager();
+
     private final Map<Location, UUID> lastBrewer = new HashMap<>();
 
-    // ✅ NORMALER KLICK (HÄUFIGSTER FALL)
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         if (!(event.getInventory() instanceof BrewerInventory inv)) return;
-        if (event.getSlot() != 3) return; // Ingredient Slot
 
-        ItemStack item = event.getCursor(); // WICHTIG: Cursor beim Ablegen!
+        ItemStack item;
+
+        // Wenn Shift-Click vom Player-Inventory in Braustand
+        if (event.isShiftClick() && event.getClickedInventory() != null && !(event.getClickedInventory() instanceof BrewerInventory)) {
+            item = event.getCurrentItem();
+        } else {
+            item = event.getCursor();
+        }
+
         if (item == null || item.getType() == Material.AIR) return;
         if (!item.hasItemMeta()) return;
         if (!item.getItemMeta().hasCustomModelData()) return;
@@ -54,14 +58,14 @@ public class BrewListener implements Listener {
         if (stand == null) return;
 
         Player player = (Player) event.getWhoClicked();
-        if (lastBrewer.get(stand.getBlock().getLocation()) == player.getUniqueId())return;
-        lastBrewer.remove(stand.getBlock().getLocation());
-        lastBrewer.put(stand.getBlock().getLocation(), player.getUniqueId());
 
-        Bukkit.broadcast(Component.text("CLICK → Brewer gespeichert"));
+        lastBrewer.putIfAbsent(
+                stand.getBlock().getLocation(),
+                player.getUniqueId()
+        );
     }
 
-    // ✅ DRAG ALS FALLBACK
+    // ✅ DRAG SUPPORT
     @EventHandler
     public void onDrag(InventoryDragEvent event) {
         if (!(event.getInventory() instanceof BrewerInventory inv)) return;
@@ -77,13 +81,14 @@ public class BrewListener implements Listener {
         if (stand == null) return;
 
         Player player = (Player) event.getWhoClicked();
-        if (lastBrewer.get(stand.getBlock().getLocation()) == player.getUniqueId())return;
-        lastBrewer.remove(stand.getBlock().getLocation());
-        lastBrewer.put(stand.getBlock().getLocation(), player.getUniqueId());
 
+        lastBrewer.putIfAbsent(
+                stand.getBlock().getLocation(),
+                player.getUniqueId()
+        );
     }
 
-    // ✅ JETZT FUNKTIONIERT AUCH DAS BREW EVENT
+    // ✅ BREW EVENT (STABIL)
     @EventHandler
     public void onBrew(BrewEvent event) {
         BrewerInventory inv = event.getContents();
@@ -91,12 +96,11 @@ public class BrewListener implements Listener {
         if (stand == null) return;
 
         Location loc = stand.getBlock().getLocation();
-        if (!lastBrewer.containsKey(loc)) {
-            return;
-        }
+        if (!lastBrewer.containsKey(loc)) return;
 
         Player brewer = Bukkit.getPlayer(lastBrewer.get(loc));
         if (brewer == null) return;
+
         LingoUser lingoBrewer = new LingoPlayer(brewer.getUniqueId());
 
         ItemStack ingredient = inv.getIngredient();
@@ -104,57 +108,106 @@ public class BrewListener implements Listener {
         if (!ingredient.getItemMeta().hasCustomModelData()) return;
         if (ingredient.getItemMeta().getCustomModelData() != 12) return;
 
-        if (ingredient.getAmount() <= 1) {
-            lastBrewer.remove(loc);
-        }
-        stand.setFuelLevel(Math.max(stand.getFuelLevel() - 2, 0));
-        Random random = new Random();
+        stand.setFuelLevel(Math.max(stand.getFuelLevel() - 1, 0));
 
         event.setCancelled(true);
+
+        Random random = new Random();
+        boolean potionsBrewed = false;
         for (int i = 0; i < 3; i++) {
-            if(random.nextInt(2) == 1) { //CHANCE 50%
-                ItemStack bottle = inv.getItem(i);
-                if (bottle == null || bottle.getType() != Material.POTION) continue;
+            if (random.nextBoolean()) {
 
                 ItemStack result = new ItemStack(Material.POTION);
                 PotionMeta meta = (PotionMeta) result.getItemMeta();
-
-                meta.getPersistentDataContainer().set(new NamespacedKey(ItemForge.getForge(), "left_filling"), PersistentDataType.INTEGER, 5);
+                meta.setCustomModelData(25);
                 meta.setBasePotionType(PotionType.MUNDANE);
                 meta.displayName(Component.text(
-                        Lingo.getLibrary().getMessage(lingoBrewer.getLanguage(), "Item-Invisibility-Tincture")
-                ).color(TextColor.color(Color.FUCHSIA.asRGB())));
+                        Lingo.getLibrary().getMessage(
+                                lingoBrewer.getLanguage(),
+                                "Item-Invisibility-Tincture"
+                        )
+                ).color(ServerColors.DodgerBlue3.color())
+                        .decoration(TextDecoration.ITALIC, false));
 
-                meta.addCustomEffect(
-                        new PotionEffect(PotionEffectType.GLOWING, 20 * 60, 3),
-                        true
+                meta.getPersistentDataContainer().set(
+                        new NamespacedKey(ItemForge.getForge(), "left_filling"),
+                        PersistentDataType.INTEGER,
+                        fileManager.maxTincutureUses()
+                );
+                result.setItemMeta(meta);
+                meta.getPersistentDataContainer().set(
+                        new NamespacedKey(ItemForge.getForge(), "brewer"),
+                        PersistentDataType.STRING,
+                        brewer.getUniqueId().toString()
                 );
 
-                meta.setColor(Color.fromRGB(
-                        ServerColors.Red3.getR(),
-                        ServerColors.Red3.getG(),
-                        ServerColors.Red3.getB()
-                ));
+                List<Component> lore = new ArrayList<>();
+                for (int d = 1; d <= 6; d++) {
+                    String key = "Item-Tincture-Lore-" + d;
+                    String message = Lingo.getLibrary().getMessage(lingoBrewer.getLanguage(), key);
+                    lore.add(Component.text(replaceTincutreLore(lingoBrewer.getLanguage(), message, result)));
+                }
+
+                meta.lore(lore);
+                meta.addCustomEffect(
+                        new PotionEffect(PotionEffectType.UNLUCK, 20 * 60 * 5, 5),
+                        true
+                );
+                meta.addCustomEffect(
+                        new PotionEffect(PotionEffectType.NAUSEA, 20 * 10, 5),
+                        false
+                );
+
+                meta.setColor(Color.fromRGB(255,255,255));
 
                 meta.setMaxStackSize(8);
                 result.setItemMeta(meta);
+                result.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
 
                 inv.setItem(i, result);
-            }else { //CHANCE 50%
+                potionsBrewed = true;
+
+            } else {
                 ItemStack mundanePotion = new ItemStack(Material.POTION);
                 PotionMeta meta = (PotionMeta) mundanePotion.getItemMeta();
-
                 meta.setBasePotionType(PotionType.MUNDANE);
                 mundanePotion.setItemMeta(meta);
                 inv.setItem(i, mundanePotion);
             }
         }
 
-        Advancements.playout(brewer, Advancement.GLOBAL_ALCHEMIST);
-        if ((ingredient.getAmount() >= 1)) {
-            inv.getIngredient().setAmount(ingredient.getAmount() - 1);
-        } else {
-            inv.setIngredient(new ItemStack(Material.AIR));
+        if (potionsBrewed) {
+            Advancements.playout(brewer, Advancement.GLOBAL_ALCHEMIST);
+            if (random.nextInt(100) < 100) {
+                loc.getWorld().createExplosion(loc, 1.5F);
+            }
         }
+
+        // ✅ KORREKTE STACK-LOGIK
+        int newAmount = ingredient.getAmount() - 1;
+
+        if (newAmount <= 0) {
+            inv.setIngredient(new ItemStack(Material.AIR));
+            lastBrewer.remove(loc); // ✅ Nur jetzt löschen!
+        } else {
+            ingredient.setAmount(newAmount);
+        }
+    }
+
+    private String replaceTincutreLore(Locale locale, String message, ItemStack tincture) {
+        Integer leftFilling = tincture.getPersistentDataContainer().get(
+                new NamespacedKey(ItemForge.getForge(), "left_filling"),
+                PersistentDataType.INTEGER
+        );
+
+        // Null-safe: falls null, auf 0 setzen
+        if (leftFilling == null) leftFilling = 0;
+
+        return message.replace("{FILLING}", Lingo.getLibrary().getMessage(locale, "Item-Tincture-Filling")
+                .replace("{1}", leftFilling >= 1 ? "§a" : "§7")
+                .replace("{2}", leftFilling >= 2 ? "§a" : "§7")
+                .replace("{3}", leftFilling >= 3 ? "§a" : "§7")
+                .replace("{4}", leftFilling >= 4 ? "§a" : "§7")
+                .replace("{5}", leftFilling >= 5 ? "§a" : "§7"));
     }
 }

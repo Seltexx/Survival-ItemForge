@@ -1,7 +1,7 @@
 package de.relaxogames.snorlaxItemForge.advancement;
 
 public enum Advancement {
-
+    SNORLAX_ROOT("advancement_snorlaxlabs", "tick"),
     GLOBAL_ALCHEMIST("advancement_is_this_vape_liquid", "brewed_tincture"),
     GLOBAL_ALCHEMIST_EXPLODED("advancement_tincture_explosion", "tincture_explosion");
 

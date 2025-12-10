@@ -1,19 +1,20 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:potion"
+      "id": "minecraft:tnt"
     },
     "title": {
-      "text": "Ist das Vape Liquid?"
+      "text": "Drink mit Schuss!"
     },
     "description": {
-      "text": "Bereite eine universal Tinktur zu."
+      "text": "Bringe eine Universal Tinktur zum explodieren"
     },
-    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": false
+    "hidden": true,
+    "x": 2,
+    "y": 0
   },
   "criteria": {
     "tincture_explosion": {
@@ -29,5 +30,5 @@
       "minecraft:air"
     ]
   },
-  "parent": "minecraft:nether/brew_potion/advancement_global_alchemist"
+  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
 }

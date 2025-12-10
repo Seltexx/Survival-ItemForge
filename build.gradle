@@ -19,10 +19,20 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+
     implementation 'com.github.koca2000:NoteBlockAPI:1.6.2'
+    shadow        'com.github.koca2000:NoteBlockAPI:1.6.2'
+
     implementation("de.relaxogames:LingoAPI:inDev-1.7-RC01")
+    shadow        ("de.relaxogames:LingoAPI:inDev-1.7-RC01")
+
+    implementation 'com.jeff-media:custom-block-data:2.2.4'
+    shadow        'com.jeff-media:custom-block-data:2.2.4'
 }
 
+configurations {
+    shadow
+}
 tasks {
     runServer {
         // Configure the Minecraft version for our task.
@@ -58,3 +68,8 @@ processResources {
         expand props
     }
 }
+
+shadowJar {
+    configurations = [project.configurations.shadow]
+}
+

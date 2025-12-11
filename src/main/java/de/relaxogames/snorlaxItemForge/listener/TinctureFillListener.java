@@ -1,8 +1,6 @@
 package de.relaxogames.snorlaxItemForge.listener;
 
 import com.jeff_media.customblockdata.CustomBlockData;
-import de.relaxogames.api.interfaces.LingoPlayer;
-import de.relaxogames.api.interfaces.LingoUser;
 import de.relaxogames.snorlaxItemForge.FileManager;
 import de.relaxogames.snorlaxItemForge.ItemForge;
 import net.kyori.adventure.text.Component;
@@ -11,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -20,14 +19,17 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-public class TinctureInteractListener implements Listener {
+public class TinctureFillListener implements Listener {
 
     private final FileManager fileManager = new FileManager();
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
+
         Player interacter = e.getPlayer();
-        LingoUser lingoInteracter = new LingoPlayer(interacter.getUniqueId());
+
+        // Lingo wird nirgends verwendet
+        // LingoUser lingoInteracter = new LingoPlayer(interacter.getUniqueId());
 
         // --- Schritt 1: Prüfen ob Item in der Hand ---
         ItemStack interacted = e.getItem();
@@ -53,13 +55,16 @@ public class TinctureInteractListener implements Listener {
         // --- Schritt 4: CustomBlockData laden ---
         CustomBlockData cauldronBlock = new CustomBlockData(clickedBlock, ItemForge.getForge());
 
+        //TRUE -- WENN CAULDRON DIE TINKTUR BEINHALTET
         NamespacedKey hasTinctureKey = new NamespacedKey(ItemForge.getForge(), "contains_tincture");
         boolean hasTincture = Boolean.TRUE.equals(cauldronBlock.get(hasTinctureKey, PersistentDataType.BOOLEAN));
         Bukkit.broadcast(Component.text("§eDEBUG: contains_tincture = " + hasTincture));
 
+        //KEY ZUM CAULDRON LEVEL
         NamespacedKey tinctureLevelKey = new NamespacedKey(ItemForge.getForge(), "tincture_level");
-        Integer levelObj = cauldronBlock.get(tinctureLevelKey, PersistentDataType.INTEGER);
-        int level = levelObj == null ? 0 : levelObj;
+        int level = cauldronBlock.get(tinctureLevelKey, PersistentDataType.INTEGER) == null
+                ? 0
+                : cauldronBlock.get(tinctureLevelKey, PersistentDataType.INTEGER);
         Bukkit.broadcast(Component.text("§eDEBUG: Cauldron Level = " + level));
 
         // --- Schritt 6: Item benutzen zum Befüllen ---
@@ -84,8 +89,44 @@ public class TinctureInteractListener implements Listener {
                 return;
             }
 
-            if (clickedBlock.getBlockData() instanceof Levelled levelled) {
-                if (!hasTincture && levelled.getLevel() >= 1) return;
+            BlockData data = clickedBlock.getBlockData();
+
+            // Cauldron initialisieren, falls leer
+            if (level == 0 && clickedBlock.getType().equals(Material.CAULDRON)) {
+                clickedBlock.setType(Material.POWDER_SNOW_CAULDRON);
+                data = clickedBlock.getBlockData();
+
+                cauldronBlock.set(tinctureLevelKey, PersistentDataType.INTEGER, 0);
+                cauldronBlock.set(hasTinctureKey, PersistentDataType.BOOLEAN, Boolean.TRUE);
+
+                level = cauldronBlock.get(tinctureLevelKey, PersistentDataType.INTEGER);
+                hasTincture = cauldronBlock.get(hasTinctureKey, PersistentDataType.BOOLEAN);
+
+                Bukkit.broadcast(Component.text("NEUER CAULDRON"));
+            }
+
+            if (data instanceof Levelled levelled) {
+                if (!hasTincture) return;
+                if (level >= maxLevel) return;
+
+                // Spezialfall: Erstbefüllung
+                if (level == 0) {
+                    levelled.setLevel(Math.min(bottleLvl, 3));
+                    Bukkit.broadcast(Component.text("§aDEBUG: MAX LEVEL GESETZT"));
+
+                    interacted.getItemMeta().getPersistentDataContainer()
+                            .set(bottleKey, PersistentDataType.INTEGER, bottleLvl - levelled.getLevel());
+                    cauldronBlock.set(tinctureLevelKey, PersistentDataType.INTEGER, levelled.getLevel());
+
+                    bottleLvl = interacted.getItemMeta().getPersistentDataContainer().get(bottleKey, PersistentDataType.INTEGER);
+
+                    if (bottleLvl <= 0) {
+                        interacter.getInventory().remove(interacted);
+                    }
+
+                    clickedBlock.setBlockData(data);
+                    return;
+                }
 
                 int visLevel = Math.min(level + 1, 3);
                 Bukkit.broadcast(Component.text("§aDEBUG: Visuelles Level gesetzt auf " + visLevel));
@@ -107,7 +148,7 @@ public class TinctureInteractListener implements Listener {
             return;
         }
 
-        // --- Schritt 5: LEEREN prüfen ---
+        // --- Schritt 5: LEEREN ---
         if (level <= 0) {
             Bukkit.broadcast(Component.text("§cDEBUG: Level <= 0 → Abbruch"));
             clickedBlock.getWorld().playSound(clickedBlock.getLocation(), Sound.ENTITY_ENDER_EYE_DEATH, 1f, 2f);

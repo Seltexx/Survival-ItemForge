@@ -4,7 +4,7 @@ import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.commands.Debug;
 import de.relaxogames.snorlaxItemForge.listener.BrewListener;
-import de.relaxogames.snorlaxItemForge.listener.TinctureInteractListener;
+import de.relaxogames.snorlaxItemForge.listener.TinctureFillListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -44,7 +44,7 @@ public final class ItemForge extends JavaPlugin {
     private void listenerRegis(){
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new BrewListener(), this);
-        pm.registerEvents(new TinctureInteractListener(), this);
+        pm.registerEvents(new TinctureFillListener(), this);
     }
 
     public static ItemForge getForge() {

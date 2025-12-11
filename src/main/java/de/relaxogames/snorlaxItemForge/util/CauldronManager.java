@@ -1,11 +1,11 @@
 package de.relaxogames.snorlaxItemForge.util;
 
+import com.destroystokyo.paper.ParticleBuilder;
 import com.jeff_media.customblockdata.CustomBlockData;
 import de.relaxogames.api.interfaces.LingoPlayer;
 import de.relaxogames.snorlaxItemForge.FileManager;
 import de.relaxogames.snorlaxItemForge.ItemForge;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Levelled;
@@ -22,7 +22,9 @@ public class CauldronManager {
     private BlockData paperBlockData;
     private final Player toggler;
     private ItemStack itemStack;
+    private ItemStack singleBottle;
     private final CustomBlockData cauldronData;
+    private final Location cauldronLoc;
 
     private int level = 0;
 
@@ -36,6 +38,17 @@ public class CauldronManager {
         this.itemStack = itemStack;
         this.cauldronData = new CustomBlockData(cauldron, ItemForge.getForge());
         this.paperBlockData = cauldron.getBlockData();
+        this.cauldronLoc = cauldron.getLocation();
+        this.singleBottle = itemStack.clone();
+        this.singleBottle.setAmount(1);
+    }
+
+    public CauldronManager(Block cauldron, Player toggler) {
+        this.cauldron = cauldron;
+        this.toggler = toggler;
+        this.cauldronData = new CustomBlockData(cauldron, ItemForge.getForge());
+        this.paperBlockData = cauldron.getBlockData();
+        this.cauldronLoc = cauldron.getLocation();
     }
 
     public int getLevel() {
@@ -72,7 +85,13 @@ public class CauldronManager {
             levelled.setLevel(getLevel());
             cauldron.setBlockData(paperBlockData);
         }
-        toggler.getInventory().getItemInMainHand().setItemMeta(ItemBuilder.updateLore(new LingoPlayer(toggler.getUniqueId()).getLanguage(), itemStack));
+    }
+
+    public void updateMainHand(){
+        ItemMeta itemMeta = toggler.getInventory().getItemInMainHand().getItemMeta();
+        int leftFilling = itemMeta.getPersistentDataContainer().get(bottleKey, PersistentDataType.INTEGER) == null ? 0 : itemMeta.getPersistentDataContainer().get(bottleKey, PersistentDataType.INTEGER);
+        itemMeta.lore(ItemBuilder.updateLore(new LingoPlayer(toggler.getUniqueId()).getLanguage(), leftFilling));
+        toggler.getInventory().getItemInMainHand().setItemMeta(itemMeta);
     }
 
     public boolean containsTincture() {
@@ -82,6 +101,8 @@ public class CauldronManager {
     /**
      * Setzt das Cauldron-Level auf maximal möglich, basierend auf Bottle-Level
      */
+    // === in deiner Klasse (ersetze die vorhandenen Methoden) ===
+
     public void addAllLevel() {
 
         // Cauldron darf nur befüllt werden, wenn er leer ist ODER Tinktur enthält
@@ -93,12 +114,12 @@ public class CauldronManager {
             paperBlockData = cauldron.getBlockData();
         }
 
-        ItemMeta meta = itemStack.getItemMeta();
+        // *** WICHTIG: Nur 1 Item wird verändert ***
+        ItemMeta meta = singleBottle.getItemMeta();
         if (meta == null) return;
 
         if (!meta.hasCustomModelData()) return;
         if (meta.getCustomModelData() != 25) return;
-
 
         // Bottle Level laden
         Integer bottleLvl = meta.getPersistentDataContainer()
@@ -107,13 +128,17 @@ public class CauldronManager {
         int bottleLevel = bottleLvl == null ? 0 : bottleLvl;
 
         if (bottleLevel <= 0) {
-            toggler.getInventory().remove(itemStack);
+            removeOnePotionAndAddGlassBottle();
             return;
         }
 
         int maxLevel = fileManager.maxTincutureCauldronLevel();
 
-        if (getLevel() >= maxLevel) return;
+        if (getLevel() >= maxLevel){
+            update();
+            updateMainHand();
+            return;
+        }
 
         // ▶ KORREKT: Wie viel in den Cauldron passt
         int currentLevel = getLevel();
@@ -134,13 +159,30 @@ public class CauldronManager {
         int newBottleLevel = bottleLevel - fillAmount;
         meta.getPersistentDataContainer().set(bottleKey, PersistentDataType.INTEGER, newBottleLevel);
 
-        // Meta speichern
-        itemStack.setItemMeta(meta);
+        // LORE AKTUALISIEREN (auf der neuen Meta)
+        meta.lore(ItemBuilder.updateLore(new LingoPlayer(toggler.getUniqueId()).getLanguage(), newBottleLevel));
 
-        // Wenn Flasche leer -> entfernen
+        // Meta in singleBottle setzen
+        singleBottle.setItemMeta(meta);
+
+        // Jetzt die Inventar-Änderung durchführen:
+        // - wenn Flasche leer => entferne eine und gib Glasflasche
+        // - ansonsten => ersetze genau 1 Flasche durch die aktualisierte singleBottle
         if (newBottleLevel <= 0) {
-            toggler.getInventory().remove(itemStack);
-            toggler.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE));
+            removeOnePotionAndAddGlassBottle();
+        } else {
+            replaceOneBottleWithUpdated(meta);
+        }
+
+        //Sound abspielen
+        cauldronLoc.getWorld().playSound(cauldronLoc, Sound.BLOCK_BREWING_STAND_BREW, 1000, 1.5F);
+
+        //Partikel
+        ParticleBuilder particleBuilder = Particle.DUST.builder()
+                .color(Color.WHITE, 1.5f);
+
+        for (double i = -1.0; i <= 2.0; i += 0.25) {
+            particleBuilder.location(cauldronLoc.clone().add(0.5, i, 0.5)).receivers(32, true).spawn();
         }
 
         // Block visuell aktualisieren
@@ -148,6 +190,116 @@ public class CauldronManager {
             levelled.setLevel(getLevel());
             cauldron.setBlockData(paperBlockData);
         }
+    }
+
+    public void depleteLevel(){
+        if (level <= 0)return;
+        if (level == 1){
+            // Markierung Cauldron als Tinktur-Cauldron entfernen
+            cauldronData.set(hasTinctureKey, PersistentDataType.BOOLEAN, true);
+        }
+        if (level > 1){
+            setLevel(getLevel()-1);
+
+            //Sound Abspielen
+            cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_PREPARE_ATTACK, 1000, 1.5F);
+
+            //Partikel
+            ParticleBuilder particleBuilder = Particle.DUST.builder()
+                    .color(Color.WHITE, 1.5f);
+
+            return;
+        }
         update();
+    }
+
+    /**
+     * Verringert den Stack in der Hand um 1 und fügt die aktualisierte singleBottle (mit meta) dem Inventar hinzu.
+     * Falls Stack == 1, ersetzt das Item direkt (setzt die Hand auf die aktualisierte singleBottle).
+     */
+    private void replaceOneBottleWithUpdated(ItemMeta updatedMeta) {
+        ItemStack main = toggler.getInventory().getItemInMainHand();
+        ItemStack off = toggler.getInventory().getItemInOffHand();
+
+        // Hilfsfunktion prüft, ob ein Stack zur potion passt
+        if (matchesTinctureStack(main)) {
+            // Wenn mehrere im Stack, verringern und dann updated singleBottle hinzufügen
+            if (main.getAmount() > 1) {
+                main.setAmount(main.getAmount() - 1);
+                ItemStack updated = singleBottle.clone();
+                updated.setItemMeta(updatedMeta);
+                updated.setAmount(1);
+                toggler.getInventory().addItem(updated);
+            } else {
+                // Stack size == 1 -> direkt ersetzen (behalte Slot)
+                ItemStack updated = singleBottle.clone();
+                updated.setItemMeta(updatedMeta);
+                toggler.getInventory().setItemInMainHand(updated);
+            }
+            return;
+        }
+
+        if (matchesTinctureStack(off)) {
+            if (off.getAmount() > 1) {
+                off.setAmount(off.getAmount() - 1);
+                ItemStack updated = singleBottle.clone();
+                updated.setItemMeta(updatedMeta);
+                updated.setAmount(1);
+                toggler.getInventory().addItem(updated);
+            } else {
+                ItemStack updated = singleBottle.clone();
+                updated.setItemMeta(updatedMeta);
+                toggler.getInventory().setItemInOffHand(updated);
+            }
+        }
+    }
+
+    /**
+     * Entfernt eine Potion (Main oder Off) und gibt eine Glasflasche zurück.
+     */
+    private void removeOnePotionAndAddGlassBottle() {
+        ItemStack main = toggler.getInventory().getItemInMainHand();
+        ItemStack off = toggler.getInventory().getItemInOffHand();
+
+        if (matchesTinctureStack(main)) {
+            if (main.getAmount() > 1) {
+                main.setAmount(main.getAmount() - 1);
+            } else {
+                toggler.getInventory().setItemInMainHand(null);
+            }
+            toggler.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE));
+            return;
+        }
+
+        if (matchesTinctureStack(off)) {
+            if (off.getAmount() > 1) {
+                off.setAmount(off.getAmount() - 1);
+            } else {
+                toggler.getInventory().setItemInOffHand(null);
+            }
+            toggler.getInventory().addItem(new ItemStack(Material.GLASS_BOTTLE));
+        }
+    }
+
+    /**
+     * Prüft, ob das Item eine Tincture-Potion ist (CustomModelData 25 und PDC vorhanden).
+     */
+    private boolean matchesTinctureStack(ItemStack stack) {
+        if (stack == null) return false;
+        if (!stack.hasItemMeta()) return false;
+        ItemMeta m = stack.getItemMeta();
+        if (!m.hasCustomModelData()) return false;
+        if (m.getCustomModelData() != 25) return false;
+        // optional: prüfe, ob bottleKey existiert
+        Integer lvl = m.getPersistentDataContainer().get(bottleKey, PersistentDataType.INTEGER);
+        return lvl != null; // oder true, wenn du nur ModelData prüfen willst
+    }
+
+    public void delete(){
+        cauldronData.clear();
+    }
+
+    public boolean hasData(){
+        return !cauldronData.isEmpty();
     }
 }

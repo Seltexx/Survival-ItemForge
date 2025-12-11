@@ -66,28 +66,18 @@ public class ItemBuilder {
         return is;
     }
 
-    public static ItemMeta updateLore(Locale locale, ItemStack update){
-        ItemMeta meta = update.getItemMeta();
+    public static List<Component> updateLore(Locale locale, int filling){
         List<Component> lore = new ArrayList<>();
         for (int d = 1; d <= 6; d++) {
             String key = "Item-Tincture-Lore-" + d;
             String message = Lingo.getLibrary().getMessage(locale, key);
-            lore.add(Component.text(replaceTinctureLore(locale, message, update)));
+            lore.add(Component.text(replaceTinctureLore(locale, message, filling)));
         }
 
-        meta.lore(lore);
-        return meta;
+        return lore;
     }
 
-    private static String replaceTinctureLore(Locale locale, String message, ItemStack tincture) {
-        Integer leftFilling = tincture.getPersistentDataContainer().get(
-                new NamespacedKey(ItemForge.getForge(), "left_filling"),
-                PersistentDataType.INTEGER
-        );
-
-        // Null-safe: falls null, auf 0 setzen
-        if (leftFilling == null) leftFilling = 0;
-
+    private static String replaceTinctureLore(Locale locale, String message, int leftFilling) {
         return message.replace("{FILLING}", Lingo.getLibrary().getMessage(locale, "Item-Tincture-Filling")
                 .replace("{1}", leftFilling >= 1 ? "§a" : "§7")
                 .replace("{2}", leftFilling >= 2 ? "§a" : "§7")

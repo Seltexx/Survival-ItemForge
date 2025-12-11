@@ -1,5 +1,8 @@
 package de.relaxogames.snorlaxItemForge.util;
 
+import de.relaxogames.api.Lingo;
+import de.relaxogames.languages.Locale;
+import de.relaxogames.snorlaxItemForge.ItemForge;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -7,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemBuilder {
@@ -18,7 +22,6 @@ public class ItemBuilder {
     List<Component> lore;
     NamespacedKey dataKey;
     int data;
-
 
     public ItemBuilder(Component title, Material material, List<Component> lore, NamespacedKey dataKey, int data) {
         this.title = title;
@@ -61,5 +64,35 @@ public class ItemBuilder {
 
     public ItemStack getItem() {
         return is;
+    }
+
+    public static ItemMeta updateLore(Locale locale, ItemStack update){
+        ItemMeta meta = update.getItemMeta();
+        List<Component> lore = new ArrayList<>();
+        for (int d = 1; d <= 6; d++) {
+            String key = "Item-Tincture-Lore-" + d;
+            String message = Lingo.getLibrary().getMessage(locale, key);
+            lore.add(Component.text(replaceTinctureLore(locale, message, update)));
+        }
+
+        meta.lore(lore);
+        return meta;
+    }
+
+    private static String replaceTinctureLore(Locale locale, String message, ItemStack tincture) {
+        Integer leftFilling = tincture.getPersistentDataContainer().get(
+                new NamespacedKey(ItemForge.getForge(), "left_filling"),
+                PersistentDataType.INTEGER
+        );
+
+        // Null-safe: falls null, auf 0 setzen
+        if (leftFilling == null) leftFilling = 0;
+
+        return message.replace("{FILLING}", Lingo.getLibrary().getMessage(locale, "Item-Tincture-Filling")
+                .replace("{1}", leftFilling >= 1 ? "§a" : "§7")
+                .replace("{2}", leftFilling >= 2 ? "§a" : "§7")
+                .replace("{3}", leftFilling >= 3 ? "§a" : "§7")
+                .replace("{4}", leftFilling >= 4 ? "§a" : "§7")
+                .replace("{5}", leftFilling >= 5 ? "§a" : "§7"));
     }
 }

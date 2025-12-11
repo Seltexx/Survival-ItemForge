@@ -4,6 +4,7 @@ import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.commands.Debug;
 import de.relaxogames.snorlaxItemForge.listener.BrewListener;
+import de.relaxogames.snorlaxItemForge.listener.DisableListener;
 import de.relaxogames.snorlaxItemForge.listener.TinctureFillListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -26,8 +27,8 @@ public final class ItemForge extends JavaPlugin {
         // Plugin startup logic
         commandRegis();
         listenerRegis();
-        lingo = new Lingo(getDataFolder());
         FileManager.initialize(); // Load all files
+        lingo = new Lingo(getDataFolder());
         fileManager.loadMessages(lingo);
         Advancements.loadAll();
     }
@@ -45,6 +46,7 @@ public final class ItemForge extends JavaPlugin {
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new BrewListener(), this);
         pm.registerEvents(new TinctureFillListener(), this);
+        pm.registerEvents(new DisableListener(), this);
     }
 
     public static ItemForge getForge() {

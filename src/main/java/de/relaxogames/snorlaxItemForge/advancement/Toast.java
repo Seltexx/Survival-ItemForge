@@ -8,8 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
-
 public final class Toast {
 
     private FileManager fileManager = new FileManager();
@@ -60,15 +58,15 @@ public final class Toast {
     }
 
     public static void displayTo(Player player, Advancement advancement, String icon, String message, Style style){
-        new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.GLOBAL_ALCHEMIST.fileName), advancement,  icon, message, style).kickoff();
+        new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.BREWED_TINCTURE.fileName), advancement,  icon, message, style).kickoff();
     }
 
     public static void displayTo(Player player, Advancement advancement, String icon, String message, String trigger, Style style){
-        new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.GLOBAL_ALCHEMIST.fileName), advancement,  icon, message, style).kickoff();
+        new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.BREWED_TINCTURE.fileName), advancement,  icon, message, style).kickoff();
     }
 
     public static Toast create(Player player, Advancement advancement, String icon, String message, Style style){
-        return new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.GLOBAL_ALCHEMIST.fileName), advancement,  icon, message, style);
+        return new Toast(player, new NamespacedKey(ItemForge.getForge(), Advancement.BREWED_TINCTURE.fileName), advancement,  icon, message, style);
     }
 
     public static enum Style{

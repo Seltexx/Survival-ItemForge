@@ -104,6 +104,21 @@ public class FileManager {
         return fc.getInt("items.invisibility-tincture.max-uses", 3);
     }
 
+    public boolean disabledEndCrystals(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getBoolean("items.disable-end-crystal", false);
+    }
+
+    public boolean disabledTNT(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getBoolean("items.disable-tnt", false);
+    }
+
+    public boolean disabledTNTMinecart(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getBoolean("items.disable-tnt-minecart", false);
+    }
+
     public JsonObject readJSON(Advancement advancement){
         try {
             return JsonParser.parseReader(new FileReader(new File(advancementFolder + "//" + advancement.getFileName() + ".json"))).getAsJsonObject();

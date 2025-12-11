@@ -2,3 +2,7 @@ items:
   invisibility-tincture:
     max-uses: 3
     max-cauldron-level: 3
+
+  disable-end-crystal: true
+  disable-tnt: false
+  disable-tnt-minecart: true

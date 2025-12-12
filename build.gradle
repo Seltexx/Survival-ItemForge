@@ -1,29 +1,34 @@
 plugins {
     id 'java'
-    id("xyz.jpenilla.run-paper") version "2.3.1"
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id "xyz.jpenilla.run-paper" version "2.3.1"
+    id("com.gradleup.shadow") version "9.3.0"
+    id "io.papermc.paperweight.userdev" version "2.0.0-beta.19"
 }
 
 group = 'de.relaxogames'
 version = '1.0-SNAPSHOT'
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    maven {
-        name = "papermc-repo"
-        url = "https://repo.papermc.io/repository/maven-public/"
-    }
-    maven { url 'https://jitpack.io' }
+    mavenLocal()
+    gradlePluginPortal()
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    maven { url = "https://jitpack.io" }
+}
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(21) }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.21-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT")
 
     implementation 'com.github.koca2000:NoteBlockAPI:1.6.2'
     shadow        'com.github.koca2000:NoteBlockAPI:1.6.2'
 
-    implementation("de.relaxogames:LingoAPI:inDev-1.7-RC01")
+    implementation 'de.relaxogames:LingoAPI:inDev-1.7-RC01'
     shadow        ("de.relaxogames:LingoAPI:inDev-1.7-RC01")
 
     implementation 'com.jeff-media:custom-block-data:2.2.4'
@@ -33,43 +38,39 @@ dependencies {
 configurations {
     shadow
 }
-tasks {
-    runServer {
-        // Configure the Minecraft version for our task.
-        // This is the only required configuration besides applying the plugin.
-        // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.21")
-    }
-}
-
-def targetJavaVersion = 21
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
-
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release.set(targetJavaVersion)
-    }
+    options.release.set(21)
 }
 
 processResources {
     def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
-        expand props
+    filesMatching('plugin.yml') { expand props }
+}
+
+tasks {
+    runServer { minecraftVersion("1.21") }
+}
+shadowJar {
+    configurations = [project.configurations.shadow]
+    // Service-Dateien unter META-INF/services werden automatisch zusammengeführt
+    mergeServiceFiles()
+
+    // Problematische META-INF-Dateien von Signaturen und Zertifikaten ausschließen
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+
+    // Optional: Manifest selbst definieren, um Konflikte zu vermeiden
+    manifest {
+        attributes(
+                'Implementation-Title': project.name,
+                'Implementation-Version': project.version
+        )
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.shadow]
-}
 

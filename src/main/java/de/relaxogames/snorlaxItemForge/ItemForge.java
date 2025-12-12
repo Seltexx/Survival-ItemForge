@@ -2,11 +2,7 @@ package de.relaxogames.snorlaxItemForge;
 
 import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
-import de.relaxogames.snorlaxItemForge.commands.Debug;
-import de.relaxogames.snorlaxItemForge.listener.BrewListener;
-import de.relaxogames.snorlaxItemForge.listener.DisableListener;
-import de.relaxogames.snorlaxItemForge.listener.CauldronListener;
-import de.relaxogames.snorlaxItemForge.listener.ItemFrameConvert;
+import de.relaxogames.snorlaxItemForge.listener.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,7 +36,7 @@ public final class ItemForge extends JavaPlugin {
     }
 
     private void commandRegis(){
-        getCommand("debug").setExecutor(new Debug());
+
     }
 
     private void listenerRegis(){
@@ -49,6 +45,8 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new CauldronListener(), this);
         pm.registerEvents(new DisableListener(), this);
         pm.registerEvents(new ItemFrameConvert(), this);
+        pm.registerEvents(new ItemFrameListener(), this);
+        pm.registerEvents(new EntityKillListener(), this);
     }
 
     public static ItemForge getForge() {

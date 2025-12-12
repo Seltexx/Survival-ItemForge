@@ -3,7 +3,6 @@ package de.relaxogames.snorlaxItemForge.listener;
 import de.relaxogames.snorlaxItemForge.FileManager;
 import org.bukkit.Particle;
 import org.bukkit.damage.DamageSource;
-import org.bukkit.damage.DamageType;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TNTPrimed;
@@ -35,30 +34,30 @@ public class DisableListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityDamage(EntityDamageEvent e) {
-        if (e.getCause() == EntityDamageEvent.DamageCause.ENTITY_EXPLOSION) {
+    public void onEntityExplode(EntityExplodeEvent e){
+        Entity entity = e.getEntity();
 
-            DamageSource source = e.getDamageSource();
+        // TNT
+        if (entity instanceof TNTPrimed && fileManager.disabledTNT()) {
+            e.setCancelled(true);
+            entity.remove();
+            entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
+            return;
+        }
 
-            // TNT-Minecart Explosion
-            if (source.getCausingEntity() instanceof ExplosiveMinecart && fileManager.disabledTNTMinecart()) {
-                e.setCancelled(true);
-                e.setDamage(0);
-                return;
-            }
+        // TNT-Minecart
+        if (entity instanceof ExplosiveMinecart && fileManager.disabledTNTMinecart()) {
+            e.setCancelled(true);
+            entity.remove();
+            entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
+            return;
+        }
 
-            // Endkristall Explosion
-            if (source.getCausingEntity() instanceof EnderCrystal && fileManager.disabledEndCrystals()) {
-                e.setCancelled(true);
-                e.setDamage(0);
-                return;
-            }
-
-            // Endkristall Explosion
-            if (source.getCausingEntity() instanceof TNTPrimed && fileManager.disabledTNT()) {
-                e.setCancelled(true);
-                e.setDamage(0);
-            }
+        // Ender Crystal
+        if (entity instanceof EnderCrystal && fileManager.disabledEndCrystals()) {
+            e.setCancelled(true);
+            entity.remove();
+            entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
         }
     }
 

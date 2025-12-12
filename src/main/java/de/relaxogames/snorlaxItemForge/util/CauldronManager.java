@@ -177,12 +177,28 @@ public class CauldronManager {
         //Sound abspielen
         cauldronLoc.getWorld().playSound(cauldronLoc, Sound.BLOCK_BREWING_STAND_BREW, 1000, 1.5F);
 
-        //Partikel
-        ParticleBuilder particleBuilder = Particle.DUST.builder()
-                .color(Color.WHITE, 1.5f);
+        // Partikel
+        ParticleBuilder particleBuilder = Particle.WAX_OFF.builder();
 
-        for (double i = -1.0; i <= 2.0; i += 0.25) {
-            particleBuilder.location(cauldronLoc.clone().add(0.5, i, 0.5)).receivers(32, true).spawn();
+        Location base = cauldronLoc.clone();
+
+        // Schrittweite
+        double step = 0.2;
+
+        // Vier Seiten des Blocks markieren
+        for (double i = 0; i <= 1; i += step) {
+
+            // Vorderseite
+            particleBuilder.location(base.clone().add(i, 1, 0)).receivers(32, true).spawn();
+
+            // Rückseite
+            particleBuilder.location(base.clone().add(i, 0, 1)).receivers(32, true).spawn();
+
+            // Linke Seite
+            particleBuilder.location(base.clone().add(0, 1, i)).receivers(32, true).spawn();
+
+            // Rechte Seite
+            particleBuilder.location(base.clone().add(1, 0, i)).receivers(32, true).spawn();
         }
 
         // Block visuell aktualisieren
@@ -196,21 +212,44 @@ public class CauldronManager {
         if (level <= 0)return;
         if (level == 1){
             // Markierung Cauldron als Tinktur-Cauldron entfernen
-            cauldronData.set(hasTinctureKey, PersistentDataType.BOOLEAN, true);
-        }
-        if (level > 1){
-            setLevel(getLevel()-1);
+            cauldronData.set(hasTinctureKey, PersistentDataType.BOOLEAN, false);
+            setLevel(0);
 
             //Sound Abspielen
-            cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_PREPARE_ATTACK, 1000, 1.5F);
+            cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_CAST_SPELL, 1000, 0.7F);
 
-            //Partikel
-            ParticleBuilder particleBuilder = Particle.DUST.builder()
-                    .color(Color.WHITE, 1.5f);
+            // Partikel
+            ParticleBuilder particleBuilder = Particle.WAX_OFF.builder();
+
+            Location base = cauldronLoc.clone();
+
+            // Schrittweite
+            double step = 0.2;
+
+            // Vier Seiten des Blocks markieren
+            for (double i = 0; i <= 1; i += step) {
+
+                // Vorderseite
+                particleBuilder.location(base.clone().add(i, 1, 0)).receivers(32, true).spawn();
+
+                // Rückseite
+                particleBuilder.location(base.clone().add(i, 0, 1)).receivers(32, true).spawn();
+
+                // Linke Seite
+                particleBuilder.location(base.clone().add(0, 1, i)).receivers(32, true).spawn();
+
+                // Rechte Seite
+                particleBuilder.location(base.clone().add(1, 0, i)).receivers(32, true).spawn();
+            }
+
 
             return;
         }
-        update();
+        setLevel(getLevel() - 1);
+
+        //Sound Abspielen
+        cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_PREPARE_ATTACK, 1000, 1.5F);
+        return;
     }
 
     /**

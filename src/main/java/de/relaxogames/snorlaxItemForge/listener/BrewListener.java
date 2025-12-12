@@ -9,6 +9,7 @@ import de.relaxogames.snorlaxItemForge.FileManager;
 import de.relaxogames.snorlaxItemForge.ItemForge;
 import de.relaxogames.snorlaxItemForge.advancement.Advancement;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
+import de.relaxogames.snorlaxItemForge.util.ItemBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.*;
@@ -141,14 +142,13 @@ public class BrewListener implements Listener {
                         brewer.getUniqueId().toString()
                 );
 
-                List<Component> lore = new ArrayList<>();
-                for (int d = 1; d <= 6; d++) {
-                    String key = "Item-Tincture-Lore-" + d;
-                    String message = Lingo.getLibrary().getMessage(lingoBrewer.getLanguage(), key);
-                    lore.add(Component.text(replaceTincutreLore(lingoBrewer.getLanguage(), message, result)));
-                }
+                Integer leftFilling = result.getPersistentDataContainer().get(
+                        new NamespacedKey(ItemForge.getForge(), "left_filling"),
+                        PersistentDataType.INTEGER
+                );
+                if (leftFilling == null) leftFilling = fileManager.maxTincutureUses();
+                meta.lore(ItemBuilder.updateLore(lingoBrewer.getLanguage(), leftFilling));
 
-                meta.lore(lore);
                 meta.addCustomEffect(
                         new PotionEffect(PotionEffectType.UNLUCK, 20 * 60 * 5, 5),
                         true
@@ -178,7 +178,7 @@ public class BrewListener implements Listener {
 
         if (potionsBrewed) {
             Advancements.playout(brewer, Advancement.BREWED_TINCTURE);
-            if (random.nextInt(100) < 100) {
+            if (random.nextInt(100) < 5) {
                 loc.getWorld().createExplosion(loc, 1.5F);
             }
         }
@@ -192,22 +192,5 @@ public class BrewListener implements Listener {
         } else {
             ingredient.setAmount(newAmount);
         }
-    }
-
-    private String replaceTincutreLore(Locale locale, String message, ItemStack tincture) {
-        Integer leftFilling = tincture.getPersistentDataContainer().get(
-                new NamespacedKey(ItemForge.getForge(), "left_filling"),
-                PersistentDataType.INTEGER
-        );
-
-        // Null-safe: falls null, auf 0 setzen
-        if (leftFilling == null) leftFilling = 0;
-
-        return message.replace("{FILLING}", Lingo.getLibrary().getMessage(locale, "Item-Tincture-Filling")
-                .replace("{1}", leftFilling >= 1 ? "§a" : "§7")
-                .replace("{2}", leftFilling >= 2 ? "§a" : "§7")
-                .replace("{3}", leftFilling >= 3 ? "§a" : "§7")
-                .replace("{4}", leftFilling >= 4 ? "§a" : "§7")
-                .replace("{5}", leftFilling >= 5 ? "§a" : "§7"));
     }
 }

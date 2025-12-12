@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -35,17 +36,19 @@ public class ItemFrameConvert implements Listener {
         ItemStack holdedStack = e.getItem();
         if (holdedStack == null || holdedStack.getItemMeta() == null)return;
         if (holdedStack.getItemMeta().hasCustomModelData())return;
-        if (!holdedStack.getType().equals(Material.ITEM_FRAME) || !holdedStack.getType().equals(Material.GLOW_ITEM_FRAME))return;
+        if (!holdedStack.getType().equals(Material.ITEM_FRAME) && !holdedStack.getType().equals(Material.GLOW_ITEM_FRAME))return;
+        if (interacter.isSneaking())return;
 
         Block clickedBlock = e.getClickedBlock();
         if (clickedBlock == null || !clickedBlock.getType().equals(Material.POWDER_SNOW_CAULDRON))return;
+
+        e.setCancelled(true);
         CauldronManager cauldron = new CauldronManager(clickedBlock, interacter);
         if (cauldron.getLevel() < 1)return;
-
         if (cauldron == null || !cauldron.hasData())return;
 
         List<Component> lore = new ArrayList<>();
-        for (int d = 1; d <= 23; d++) {
+        for (int d = 1; d <= 3; d++) {
             lore.add(Component.text(Lingo.getLibrary().getMessage(lingoInteracter.getLanguage(), "Item-Itemframe-Lore-" + d)));
         }
 
@@ -57,8 +60,11 @@ public class ItemFrameConvert implements Listener {
 
         converted.addUnsafeEnchantment(Enchantment.VANISHING_CURSE, 1);
         converted.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        converted.getItemMeta().getPersistentDataContainer().set(itemFrameKey, PersistentDataType.BOOLEAN, true);
-        converted.getItemMeta().setCustomModelData(35);
+        ItemMeta convertedMeta = converted.getItemMeta();
+        convertedMeta.getPersistentDataContainer().set(itemFrameKey, PersistentDataType.BOOLEAN, true);
+        convertedMeta.setCustomModelData(35);
+
+        converted.setItemMeta(convertedMeta);
 
         holdedStack.setAmount(holdedStack.getAmount()-1);
         interacter.getInventory().addItem(converted);

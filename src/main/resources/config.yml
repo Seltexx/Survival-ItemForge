@@ -1,6 +1,6 @@
 items:
   invisibility-tincture:
-    max-uses: 3
+    max-uses: 6
     max-cauldron-level: 3
 
   disable-end-crystal: true

@@ -83,6 +83,7 @@ public class ItemBuilder {
                 .replace("{2}", leftFilling >= 2 ? "§a" : "§7")
                 .replace("{3}", leftFilling >= 3 ? "§a" : "§7")
                 .replace("{4}", leftFilling >= 4 ? "§a" : "§7")
-                .replace("{5}", leftFilling >= 5 ? "§a" : "§7"));
+                .replace("{5}", leftFilling >= 5 ? "§a" : "§7")
+                .replace("{6}", leftFilling >= 6 ? "§a" : "§7"));
     }
 }

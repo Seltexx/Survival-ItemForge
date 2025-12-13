@@ -6,3 +6,6 @@ items:
   disable-end-crystal: true
   disable-tnt: false
   disable-tnt-minecart: true
+
+npc:
+  villager-search-radius: 48

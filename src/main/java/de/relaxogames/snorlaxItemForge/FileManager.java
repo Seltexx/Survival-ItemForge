@@ -94,6 +94,11 @@ public class FileManager {
         lingo.loadMessages(list);
     }
 
+    public int villagerWorkingTableSearch(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getInt("npc.villager-search-radius", 48);
+    }
+
     public int maxTincutureCauldronLevel(){
         FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
         return fc.getInt("items.invisibility-tincture.max-cauldron-level", 3);

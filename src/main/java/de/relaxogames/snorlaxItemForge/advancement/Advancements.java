@@ -29,12 +29,6 @@ public class Advancements {
 
     public void kickoff() {
         grantAdvancement(player);
-
-        Bukkit.getScheduler().runTaskLater(
-                ItemForge.getForge(),
-                () -> revokeAdvancement(player),
-                10 * 20
-        );
     }
 
     public static void loadAll() {

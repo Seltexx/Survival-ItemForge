@@ -111,6 +111,6 @@ public class ItemFrameListener implements Listener {
                             " / z: " + frame.getLocation().getBlock().getZ() + "] wurde aufgrund von Inaktivität entfernt!");
                 }
             }
-        }, 20 * 5);
+        }, 20 * 60 * 5);
     }
 }

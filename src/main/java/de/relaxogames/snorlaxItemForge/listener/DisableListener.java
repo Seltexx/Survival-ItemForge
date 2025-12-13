@@ -10,6 +10,7 @@ import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.TNTPrimeEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
@@ -34,7 +35,7 @@ public class DisableListener implements Listener {
     }
 
     @EventHandler
-    public void onEntityExplode(EntityExplodeEvent e){
+    public void onEntityExplode(EntityDamageByEntityEvent e){
         Entity entity = e.getEntity();
 
         // TNT
@@ -60,7 +61,6 @@ public class DisableListener implements Listener {
             entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
         }
     }
-
 
     @EventHandler
     public void onTNTMinecart(EntityExplodeEvent e){

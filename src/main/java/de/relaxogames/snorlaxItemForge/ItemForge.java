@@ -3,6 +3,8 @@ package de.relaxogames.snorlaxItemForge;
 import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.listener.*;
+import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
+import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -47,6 +49,9 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new ItemFrameConvert(), this);
         pm.registerEvents(new ItemFrameListener(), this);
         pm.registerEvents(new EntityKillListener(), this);
+
+        pm.registerEvents(new VillagerListener(), this);
+        pm.registerEvents(new WorkingStationBreak(), this);
     }
 
     public static ItemForge getForge() {

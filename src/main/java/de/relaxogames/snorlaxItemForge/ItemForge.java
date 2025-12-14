@@ -2,6 +2,7 @@ package de.relaxogames.snorlaxItemForge;
 
 import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
+import de.relaxogames.snorlaxItemForge.commands.TestCommand;
 import de.relaxogames.snorlaxItemForge.listener.*;
 import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
@@ -38,7 +39,7 @@ public final class ItemForge extends JavaPlugin {
     }
 
     private void commandRegis(){
-
+        getCommand("debug").setExecutor(new TestCommand());
     }
 
     private void listenerRegis(){
@@ -49,6 +50,8 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new ItemFrameConvert(), this);
         pm.registerEvents(new ItemFrameListener(), this);
         pm.registerEvents(new EntityKillListener(), this);
+        pm.registerEvents(new PebbleSnowballListener(), this);
+        pm.registerEvents(new EnderDragonEggListener(), this);
 
         pm.registerEvents(new VillagerListener(), this);
         pm.registerEvents(new WorkingStationBreak(), this);

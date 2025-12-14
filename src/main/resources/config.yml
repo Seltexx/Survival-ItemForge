@@ -9,3 +9,5 @@ items:
 
 npc:
   villager-search-radius: 48
+  villager-sprinting-speed: 0.7
+  villager-walk-speed: 0.6

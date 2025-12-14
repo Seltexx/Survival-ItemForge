@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:snow_block",
+      "components": {}
+    },
+    "title": {
+      "text": "Die Lehrer hatten recht"
+    },
+    "description": {
+      "text": "Beweise, dass Schneebälle keine Spielzeuge sind."
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true,
+    "x": 2,
+    "y": 1
+  },
+  "criteria": {
+    "pebbled_snowball_death": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "pebbled_snowball_death"
+    ]
+  ],
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  },
+  "parent": "snorlax-itemforge:advancement_pebbled_snowball_hit"
+}

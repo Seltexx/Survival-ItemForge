@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:snowball",
+      "components": {}
+    },
+    "title": {
+      "text": "Kalt, Hart aber Effektiv"
+    },
+    "description": {
+      "text": "Füge einem Spieler Schade zu, indem du Ihn, mit einem Schneeball der einen Kieselstein beinhaltet, abwirfst"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "x": 1,
+    "y": 1
+  },
+  "criteria": {
+    "pebbled_snowball_hit": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "pebbled_snowball_hit"
+    ]
+  ],
+  "rewards": {
+    "loot": [],
+    "experience": 100
+  },
+  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
+}

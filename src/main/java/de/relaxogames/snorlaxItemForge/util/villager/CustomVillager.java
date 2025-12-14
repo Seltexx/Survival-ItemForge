@@ -11,50 +11,98 @@ import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.entity.CraftVillager;
 import org.bukkit.entity.Villager;
 import org.bukkit.persistence.PersistentDataType;
-import org.joml.Matrix2d;
+import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.UUID;
+public abstract class CustomVillager {
 
-public class CustomVillager {
+    protected final FileManager fM = new FileManager();
+    protected final Villager villager;
+    protected final CraftVillager nmsVillager;
+    protected final World currentWorld;
 
-    private FileManager fM = new FileManager();
+    protected Block workingStation;
+    protected Location locWork;
+    protected Profession profession;
 
-    private Villager villager;
-    private CraftVillager nmsVillager;
-    private Block workingStation;
-    private World currentWorld;
-    private Profession profession;
-    private Location locWork;
-
-    private final NamespacedKey WORKING_TABLE_KEY = new NamespacedKey(ItemForge.getForge(), "working_station");
-    private final NamespacedKey PROFESSION_KEY = new NamespacedKey(ItemForge.getForge(), "villager_profession");
-    private final NamespacedKey BLOCK_BLOCKED_BY = new NamespacedKey(ItemForge.getForge(), "villager_uuid");
-
-    public CustomVillager(Villager villager, Profession profession) {
-        this.villager = villager;
-        this.nmsVillager = (CraftVillager) villager;
-        this.profession = profession;
-    }
+    protected static final NamespacedKey WORKING_TABLE_KEY =
+            new NamespacedKey(ItemForge.getForge(), "working_station");
+    protected static final NamespacedKey PROFESSION_KEY =
+            new NamespacedKey(ItemForge.getForge(), "villager_profession");
+    protected static final NamespacedKey BLOCK_BLOCKED_BY =
+            new NamespacedKey(ItemForge.getForge(), "villager_uuid");
 
     public CustomVillager(Villager villager) {
         this.villager = villager;
         this.currentWorld = villager.getWorld();
         this.nmsVillager = (CraftVillager) villager;
+        loadPersistent();
+        moveToNearestWorkingStation();
     }
 
-    public void walkTo(Location target) {
-        nmsVillager.getHandle().getNavigation().moveTo(target.x(), target.y(), target.z(), 1);
+    protected void loadPersistent() {
+        String stored = villager.getPersistentDataContainer()
+                .get(WORKING_TABLE_KEY, PersistentDataType.STRING);
+
+        if (stored != null) {
+            String[] p = stored.split(",");
+            if (p.length == 5) {
+                locWork = new Location(
+                        currentWorld,
+                        Double.parseDouble(p[0]),
+                        Double.parseDouble(p[1]),
+                        Double.parseDouble(p[2]),
+                        Float.parseFloat(p[3]),
+                        Float.parseFloat(p[4])
+                );
+                workingStation = locWork.getBlock();
+            }
+        }
+
+        String prof = villager.getPersistentDataContainer()
+                .get(PROFESSION_KEY, PersistentDataType.STRING);
+
+        if (prof != null) {
+            for (Profession p : Profession.values()) {
+                if (p.getKey().getKey().equals(prof)) {
+                    profession = p;
+                    break;
+                }
+            }
+        }
     }
 
-    public void walkToWorkStation() {
-        nmsVillager.getHandle().getNavigation().moveTo(locWork.x(), locWork.y(), locWork.z(), 1);
+    public void walkTo(Location target, double speed) {
+        var navigator = nmsVillager.getHandle().getNavigation();
+        navigator.stop();
+        navigator.moveTo(target.getX(), target.getY(), target.getZ(), speed);
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (navigator.isStuck() || villager.isInsideVehicle()) {
+                    navigator.stop();
+                    cancel();
+                    return;
+                }
+
+                if (villager.getLocation().distanceSquared(target) <= 1.5) {
+                    navigator.stop();
+                    cancel();
+                    return;
+                }
+
+                navigator.moveTo(target.getX(), target.getY(), target.getZ(), speed);
+            }
+        }.runTaskTimer(ItemForge.getForge(), 0L, 5L);
     }
 
     public void setWorkingStation(Location location) {
-        Block blockAT = location.getBlock();
-        if (!blockAT.getType().equals(getProfession().getWorkTable())) return;
-        this.locWork = location;
-        this.workingStation = blockAT;
+        if (location == null) return;
+        Block block = location.getBlock();
+        if (getProfession() == null) return;
+        if (block.getType() != getProfession().getWorkTable()) return;
+        locWork = location;
+        workingStation = block;
     }
 
     public Profession getProfession() {
@@ -62,105 +110,83 @@ public class CustomVillager {
     }
 
     public Location getWorkstationLocation() {
-        String stored = villager.getPersistentDataContainer().get(
-                WORKING_TABLE_KEY,
-                PersistentDataType.STRING
-        );
+        return locWork;
+    }
 
-        if (stored != null) {
-            String[] parts = stored.split(",");
-            double x = Double.parseDouble(parts[0]);
-            double y = Double.parseDouble(parts[1]);
-            double z = Double.parseDouble(parts[2]);
-            float yaw = Float.parseFloat(parts[3]);
-            float pitch = Float.parseFloat(parts[4]);
-
-            return new Location(currentWorld, x, y, z, yaw, pitch);
-        }
-        return null;
+    public boolean moveToOwnWorkingStation() {
+        if (locWork == null) return false;
+        walkTo(locWork, fM.villagerWalkingSpeed());
+        return true;
     }
 
     public boolean moveToNearestWorkingStation() {
-        if (!hasBlockInRange()) return false;
-        Location nearest = findNearestBlock(villager.getLocation(), fM.villagerWorkingTableSearch());
-        var nms = nmsVillager.getHandle();
-        var navigator = nms.getNavigation(); // Navigation Zugriff
+        if (!villager.isAdult()) return false;
+        if (locWork != null) return false;
 
-        // Pfad erstellen und starten
-        var blockPos = new net.minecraft.core.BlockPos(nearest.getBlockX(), nearest.getBlockY(), nearest.getBlockZ());
-        Block target = villager.getWorld().getBlockAt(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-        var path = navigator.createPath(blockPos, 0);
+        Location nearest = findNearestBlock(
+                villager.getLocation(),
+                fM.villagerWorkingTableSearch()
+        );
 
-        if (path != null) {
-            navigator.moveTo(path, 0.5);
-            CustomBlockData stationData = new CustomBlockData(target, ItemForge.getForge());
+        if (nearest == null) return false;
 
-            String data = stationData.get(BLOCK_BLOCKED_BY, PersistentDataType.STRING);
-            assert data != null;
-            if (!UUID.fromString(data).equals(villager.getUniqueId()))return false;
+        Block block = nearest.getBlock();
+        Profession prof = Profession.convertBlockType(block.getType());
+        if (prof == null) return false;
 
-            Location base = nearest.clone();
+        CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
+        if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) return false;
 
-            // Schrittweite
-            double step = 0.2;
+        data.set(BLOCK_BLOCKED_BY, PersistentDataType.STRING,
+                villager.getUniqueId().toString());
 
-            // Partikel
-            ParticleBuilder particleBuilder = Particle.HAPPY_VILLAGER.builder();
-            // Vier Seiten des Blocks markieren
-            for (double i = 0; i <= 1; i += step) {
+        profession = prof;
+        locWork = nearest;
+        workingStation = block;
 
-                // Unten (y = 0)
-                particleBuilder.location(base.clone().add(i, 0, 0)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(i, 0, 1)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(0, 0, i)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(1, 0, i)).receivers(32, true).spawn();
+        villager.getPersistentDataContainer().set(
+                WORKING_TABLE_KEY,
+                PersistentDataType.STRING,
+                serialize(nearest)
+        );
 
-                // Oben (y = 1)
-                particleBuilder.location(base.clone().add(i, 1, 0)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(i, 1, 1)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(0, 1, i)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(1, 1, i)).receivers(32, true).spawn();
+        villager.getPersistentDataContainer().set(
+                PROFESSION_KEY,
+                PersistentDataType.STRING,
+                prof.getKey().getKey()
+        );
 
-                // Vertikale Kanten
-                particleBuilder.location(base.clone().add(0, i, 0)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(1, i, 0)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(0, i, 1)).receivers(32, true).spawn();
-                particleBuilder.location(base.clone().add(1, i, 1)).receivers(32, true).spawn();
-            }
+        villager.setProfession(Villager.Profession.CLERIC);
+        villager.setGlowing(true);
 
-            if (navigator.getPath().isDone()) {
-                locWork = nearest;
-                workingStation = nearest.getBlock();
-                stationData.set(BLOCK_BLOCKED_BY, PersistentDataType.STRING, villager.getUniqueId().toString());
-                villager.getPersistentDataContainer().set(PROFESSION_KEY, PersistentDataType.STRING, Profession.convertBlockType(workingStation.getType()).getKey().getKey());
-                villager.getPersistentDataContainer().set(WORKING_TABLE_KEY, PersistentDataType.STRING, locWork.toString());
-                villager.setGlowing(true);
-                villager.setProfession(Villager.Profession.CLERIC);
-                return true;
-            }
-        }
-        return false;
+        walkTo(nearest, fM.villagerSprintingSpeed());
+        return true;
     }
 
-    public Block pathGoal() {
-        Node endNode = nmsVillager.getHandle().getNavigation().getPath().getEndNode();
-        assert endNode != null;
-        Location pathEnd = new Location(villager.getWorld(), endNode.x, endNode.y - 1, endNode.z);
+    public abstract void work();
+    public abstract void replenishTrades();
 
-        return pathEnd.getBlock();
+    public Block pathGoal() {
+        if (nmsVillager.getHandle().getNavigation().getPath() == null) return null;
+        Node end = nmsVillager.getHandle().getNavigation().getPath().getEndNode();
+        if (end == null) return null;
+        return new Location(currentWorld, end.x, end.y - 1, end.z).getBlock();
     }
 
     public boolean hasBlockInRange() {
-        return findNearestBlock(villager.getLocation(), fM.villagerWorkingTableSearch()) != null;
+        return findNearestBlock(
+                villager.getLocation(),
+                fM.villagerWorkingTableSearch()
+        ) != null;
     }
 
     public boolean hasPath() {
         return nmsVillager.getHandle().getNavigation().getPath() != null;
     }
 
-    private Location findNearestBlock(Location loc, int radius) {
-        double closestDistance = Double.MAX_VALUE;
-        Location closest = null;
+    protected Location findNearestBlock(Location loc, int radius) {
+        double closest = Double.MAX_VALUE;
+        Location result = null;
 
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {
@@ -172,43 +198,54 @@ public class CustomVillager {
                             loc.getBlockZ() + z
                     );
 
-                    // Blocktyp prüfen
-                    for (Profession prof : Profession.values()) {
-                        if (block.getType() != prof.getWorkTable()) continue;
+                    Profession p = Profession.convertBlockType(block.getType());
+                    if (p == null) continue;
 
-                        // CustomBlockData nur erzeugen, wenn Block passt
-                        CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
+                    CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
+                    if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) continue;
 
-                        // Block muss frei sein
-                        if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) continue;
-
-                        double distance = loc.distanceSquared(block.getLocation());
-                        if (distance < closestDistance) {
-                            closestDistance = distance;
-                            closest = block.getLocation();
-                        }
+                    double d = loc.distanceSquared(block.getLocation());
+                    if (d < closest) {
+                        closest = d;
+                        result = block.getLocation();
                     }
                 }
             }
         }
-        return closest;
+        return result;
     }
 
     public void removeWorkingstation() {
         profession = null;
         locWork = null;
         workingStation = null;
+
         villager.getPersistentDataContainer().remove(WORKING_TABLE_KEY);
         villager.getPersistentDataContainer().remove(PROFESSION_KEY);
-
-        ParticleBuilder particleBuilder = Particle.DUST.builder()
-                .color(Color.BLUE, 2.0f);
-        for (double i = 2; i <= 1.0; i += 0.25) {
-            particleBuilder.location(villager.getLocation().clone().add(0, i, 0)).receivers(32, true).spawn();
-        }
+        villager.setGlowing(false);
     }
 
-    static enum Profession {
+    protected String serialize(Location loc) {
+        return loc.getX() + "," +
+                loc.getY() + "," +
+                loc.getZ() + "," +
+                loc.getYaw() + "," +
+                loc.getPitch();
+    }
+
+    public World getCurrentWorld() {
+        return currentWorld;
+    }
+
+    public Villager getVillager() {
+        return villager;
+    }
+
+    public Block getWorkingStation() {
+        return workingStation;
+    }
+
+    public enum Profession {
 
         BEEKEEPER("beekeeper", Material.BEEHIVE),
         FIRECRACKER("firecracker", Material.CRAFTER);
@@ -230,14 +267,14 @@ public class CustomVillager {
         }
 
         public static Profession convertBlockType(Material material) {
-            for (Profession professions : Profession.values()) {
-                if (!professions.getWorkTable().equals(material)) continue;
-                return professions;
+            for (Profession p : values()) {
+                if (p.workTable == material) return p;
             }
             return null;
         }
+
+        public boolean searchAndAssignWorkstation(CustomVillager cv) {
+            return cv.moveToNearestWorkingStation();
+        }
     }
 }
-
-
-

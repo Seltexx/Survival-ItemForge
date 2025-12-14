@@ -94,6 +94,16 @@ public class FileManager {
         lingo.loadMessages(list);
     }
 
+    public double villagerSprintingSpeed(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getDouble("npc.villager-sprinting-speed", 0.7);
+    }
+
+    public double villagerWalkingSpeed(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getDouble("npc.villager-walk-speed", 0.6);
+    }
+
     public int villagerWorkingTableSearch(){
         FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
         return fc.getInt("npc.villager-search-radius", 48);

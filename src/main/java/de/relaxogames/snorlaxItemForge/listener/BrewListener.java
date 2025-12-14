@@ -180,6 +180,7 @@ public class BrewListener implements Listener {
             Advancements.playout(brewer, Advancement.BREWED_TINCTURE);
             if (random.nextInt(100) < 5) {
                 loc.getWorld().createExplosion(loc, 1.5F);
+                Advancements.playout(brewer, Advancement.GLOBAL_ALCHEMIST_EXPLODED);
             }
         }
 

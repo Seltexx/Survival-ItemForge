@@ -35,7 +35,7 @@ public class EntityKillListener implements Listener {
         if (!killed.getType().equals(EntityType.GHAST))return;
 
         Random random = new Random();
-        if (random.nextInt(0, 100) <= 102){
+        if (random.nextInt(100) >= 40){
             List<Component> lore = new ArrayList<>();
             for (int d = 1; d <= 2; d++) {
                 String key = "Item-Kaolin-Lore-" + d;

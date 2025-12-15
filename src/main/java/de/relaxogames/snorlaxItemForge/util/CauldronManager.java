@@ -180,26 +180,37 @@ public class CauldronManager {
         // Partikel
         ParticleBuilder particleBuilder = Particle.WAX_OFF.builder();
 
-        Location base = cauldronLoc.clone();
+        Location base = cauldronLoc.getBlock().getLocation();
+
+        // Höhe der Umrandung der Oberkante
+        double y = base.getY() + 1.01;
 
         // Schrittweite
         double step = 0.2;
 
-        // Vier Seiten des Blocks markieren
         for (double i = 0; i <= 1; i += step) {
 
-            // Vorderseite
-            particleBuilder.location(base.clone().add(i, 1, 0)).receivers(32, true).spawn();
+            // Vorderseite (Z = 0)
+            particleBuilder.location(base.clone().add(i, y - base.getY(), 0))
+                    .receivers(32, true)
+                    .spawn();
 
-            // Rückseite
-            particleBuilder.location(base.clone().add(i, 0, 1)).receivers(32, true).spawn();
+            // Rückseite (Z = 1)
+            particleBuilder.location(base.clone().add(i, y - base.getY(), 1))
+                    .receivers(32, true)
+                    .spawn();
 
-            // Linke Seite
-            particleBuilder.location(base.clone().add(0, 1, i)).receivers(32, true).spawn();
+            // Linke Seite (X = 0)
+            particleBuilder.location(base.clone().add(0, y - base.getY(), i))
+                    .receivers(32, true)
+                    .spawn();
 
-            // Rechte Seite
-            particleBuilder.location(base.clone().add(1, 0, i)).receivers(32, true).spawn();
+            // Rechte Seite (X = 1)
+            particleBuilder.location(base.clone().add(1, y - base.getY(), i))
+                    .receivers(32, true)
+                    .spawn();
         }
+
 
         // Block visuell aktualisieren
         if (paperBlockData instanceof Levelled levelled) {
@@ -221,25 +232,35 @@ public class CauldronManager {
             // Partikel
             ParticleBuilder particleBuilder = Particle.WAX_OFF.builder();
 
-            Location base = cauldronLoc.clone();
+            Location base = cauldronLoc.getBlock().getLocation();
+
+            // Höhe der Umrandung der Oberkante
+            double y = base.getY() + 1.01;
 
             // Schrittweite
             double step = 0.2;
 
-            // Vier Seiten des Blocks markieren
             for (double i = 0; i <= 1; i += step) {
 
-                // Vorderseite
-                particleBuilder.location(base.clone().add(i, 1, 0)).receivers(32, true).spawn();
+                // Vorderseite (Z = 0)
+                particleBuilder.location(base.clone().add(i, y - base.getY(), 0))
+                        .receivers(32, true)
+                        .spawn();
 
-                // Rückseite
-                particleBuilder.location(base.clone().add(i, 0, 1)).receivers(32, true).spawn();
+                // Rückseite (Z = 1)
+                particleBuilder.location(base.clone().add(i, y - base.getY(), 1))
+                        .receivers(32, true)
+                        .spawn();
 
-                // Linke Seite
-                particleBuilder.location(base.clone().add(0, 1, i)).receivers(32, true).spawn();
+                // Linke Seite (X = 0)
+                particleBuilder.location(base.clone().add(0, y - base.getY(), i))
+                        .receivers(32, true)
+                        .spawn();
 
-                // Rechte Seite
-                particleBuilder.location(base.clone().add(1, 0, i)).receivers(32, true).spawn();
+                // Rechte Seite (X = 1)
+                particleBuilder.location(base.clone().add(1, y - base.getY(), i))
+                        .receivers(32, true)
+                        .spawn();
             }
 
 

@@ -20,7 +20,6 @@ import java.util.UUID;
 public class WorkingStationBreak implements Listener {
 
     private final NamespacedKey BLOCK_BLOCKED_BY = new NamespacedKey(ItemForge.getForge(), "villager_uuid");
-    private final NamespacedKey WORKING_TABLE_KEY = new NamespacedKey(ItemForge.getForge(), "working_station");
 
     @EventHandler
     public void onBreak(BlockBreakEvent e){

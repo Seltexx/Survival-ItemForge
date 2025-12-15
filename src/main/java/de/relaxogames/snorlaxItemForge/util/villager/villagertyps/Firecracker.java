@@ -9,7 +9,12 @@ public class Firecracker extends CustomVillager {
     }
 
     @Override
-    public void work() {
+    public void acceptJob() {
+
+    }
+
+    @Override
+    public void workOnStation() {
 
     }
 

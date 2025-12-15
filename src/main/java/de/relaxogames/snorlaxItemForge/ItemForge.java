@@ -4,8 +4,10 @@ import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.commands.TestCommand;
 import de.relaxogames.snorlaxItemForge.listener.*;
+import de.relaxogames.snorlaxItemForge.listener.villager.BeekeeperListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
+import de.relaxogames.snorlaxItemForge.util.villager.villagertyps.Beekeeper;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -54,6 +56,7 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new EnderDragonEggListener(), this);
 
         pm.registerEvents(new VillagerListener(), this);
+        pm.registerEvents(new BeekeeperListener(), this);
         pm.registerEvents(new WorkingStationBreak(), this);
     }
 

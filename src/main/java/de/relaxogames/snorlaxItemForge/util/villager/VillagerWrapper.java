@@ -37,6 +37,21 @@ public class VillagerWrapper {
         };
     }
 
+    public static CustomVillager load(Villager villager) {
+        String type = villager.getPersistentDataContainer()
+                .get(PROFESSION_KEY, PersistentDataType.STRING);
+
+        if (type == null) {
+            return null;
+        }
+
+        return switch (type) {
+            case "beekeeper" -> new Beekeeper(villager);
+            case "firecracker" -> new Firecracker(villager);
+            default -> null;
+        };
+    }
+
 
     private static String findNearestJob(Location loc, int radius) {
         double closestDistance = Double.MAX_VALUE;

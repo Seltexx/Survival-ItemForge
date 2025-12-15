@@ -4,7 +4,6 @@ import com.destroystokyo.paper.ParticleBuilder;
 import com.jeff_media.customblockdata.CustomBlockData;
 import de.relaxogames.snorlaxItemForge.FileManager;
 import de.relaxogames.snorlaxItemForge.ItemForge;
-import net.kyori.adventure.text.Component;
 import net.minecraft.world.level.pathfinder.Node;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -71,29 +70,34 @@ public abstract class CustomVillager {
         }
     }
 
-    public void walkTo(Location target, double speed) {
+    public boolean walkTo(Location target, double speed, boolean work) {
         var navigator = nmsVillager.getHandle().getNavigation();
         navigator.stop();
         navigator.moveTo(target.getX(), target.getY(), target.getZ(), speed);
 
+        final boolean[] done = {false};
         new BukkitRunnable() {
             @Override
             public void run() {
                 if (navigator.isStuck() || villager.isInsideVehicle()) {
                     navigator.stop();
                     cancel();
+                    done[0] = false;
                     return;
                 }
 
                 if (villager.getLocation().distanceSquared(target) <= 1.5) {
                     navigator.stop();
                     cancel();
+                    if (work) workOnStation();
+                    done[0] = true;
                     return;
                 }
 
                 navigator.moveTo(target.getX(), target.getY(), target.getZ(), speed);
             }
         }.runTaskTimer(ItemForge.getForge(), 0L, 5L);
+        return done[0];
     }
 
     public void setWorkingStation(Location location) {
@@ -115,8 +119,12 @@ public abstract class CustomVillager {
 
     public boolean moveToOwnWorkingStation() {
         if (locWork == null) return false;
-        walkTo(locWork, fM.villagerWalkingSpeed());
-        return true;
+        return walkTo(locWork, fM.villagerWalkingSpeed(), false);
+    }
+
+    public void work(){
+        if (locWork == null)return;
+        walkTo(locWork, fM.villagerWalkingSpeed(), true);
     }
 
     public boolean moveToNearestWorkingStation() {
@@ -155,23 +163,70 @@ public abstract class CustomVillager {
                 PersistentDataType.STRING,
                 prof.getKey().getKey()
         );
+        ParticleBuilder particleBuilder = Particle.HAPPY_VILLAGER.builder();
 
-        villager.setProfession(Villager.Profession.CLERIC);
-        villager.setGlowing(true);
+        Location base = block.getLocation();
 
-        walkTo(nearest, fM.villagerSprintingSpeed());
+        // Höhe der Umrandung (z. B. Oberkante)
+        double y = base.getY() + 1.01;
+
+        // Schrittweite
+        double step = 0.2;
+
+        for (double i = 0; i <= 1; i += step) {
+
+            // Vorderseite (Z = 0)
+            particleBuilder.location(base.clone().add(i, y - base.getY(), 0))
+                    .receivers(32, true)
+                    .spawn();
+
+            // Rückseite (Z = 1)
+            particleBuilder.location(base.clone().add(i, y - base.getY(), 1))
+                    .receivers(32, true)
+                    .spawn();
+
+            // Linke Seite (X = 0)
+            particleBuilder.location(base.clone().add(0, y - base.getY(), i))
+                    .receivers(32, true)
+                    .spawn();
+
+            // Rechte Seite (X = 1)
+            particleBuilder.location(base.clone().add(1, y - base.getY(), i))
+                    .receivers(32, true)
+                    .spawn();
+        }
+
+        //HINLAUFEN
+        var navigator = nmsVillager.getHandle().getNavigation();
+        navigator.stop();
+        navigator.moveTo(nearest.getX(), nearest.getY(), nearest.getZ(), fM.villagerSprintingSpeed());
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (navigator.isStuck() || villager.isInsideVehicle()) {
+                    navigator.stop();
+                    cancel();
+                    removeWorkingstation();
+                    return;
+                }
+
+                if (villager.getLocation().distanceSquared(nearest) <= 2.5) {
+                    navigator.stop();
+                    cancel();
+                    acceptJob();
+                    return;
+                }
+
+                navigator.moveTo(nearest.getX(), nearest.getY(), nearest.getZ(), fM.villagerSprintingSpeed());
+            }
+        }.runTaskTimer(ItemForge.getForge(), 0L, 5L);
         return true;
     }
 
-    public abstract void work();
+    public abstract void acceptJob();
+    protected abstract void workOnStation();
     public abstract void replenishTrades();
-
-    public Block pathGoal() {
-        if (nmsVillager.getHandle().getNavigation().getPath() == null) return null;
-        Node end = nmsVillager.getHandle().getNavigation().getPath().getEndNode();
-        if (end == null) return null;
-        return new Location(currentWorld, end.x, end.y - 1, end.z).getBlock();
-    }
 
     public boolean hasBlockInRange() {
         return findNearestBlock(
@@ -222,7 +277,8 @@ public abstract class CustomVillager {
 
         villager.getPersistentDataContainer().remove(WORKING_TABLE_KEY);
         villager.getPersistentDataContainer().remove(PROFESSION_KEY);
-        villager.setGlowing(false);
+        villager.getEquipment().clear();
+        villager.setProfession(Villager.Profession.NONE);
     }
 
     protected String serialize(Location loc) {

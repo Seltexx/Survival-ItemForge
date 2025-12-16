@@ -1,50 +1,52 @@
 package de.relaxogames.snorlaxItemForge.util.villager.villagertyps;
 
-import com.destroystokyo.paper.entity.villager.Reputation;
-import com.destroystokyo.paper.entity.villager.ReputationType;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import de.relaxogames.api.Lingo;
+import de.relaxogames.languages.Locale;
 import de.relaxogames.snorlaxItemForge.util.villager.CustomVillager;
-import de.relaxogames.snorlaxItemForge.util.villager.VillagerWrapper;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
-import org.bukkit.entity.Bee;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.Merchant;
+import org.bukkit.inventory.MerchantRecipe;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
+import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 public class Beekeeper extends CustomVillager {
+
+    private Merchant merchant;
+    private List<MerchantRecipe> merchantRecipes;
+
     public Beekeeper(Villager villager) {
-        super(villager);
+        super(villager, Component.text(
+                Lingo.getLibrary().getMessage(Locale.GERMAN, "Beeworker-Title")
+        ).color(TextColor.color(255, 128, 0)));
+        merchant = getMerchant();
     }
 
     @Override
     public void acceptJob() {
-        villager.setProfession(Villager.Profession.NITWIT);
-        villager.setVillagerType(Villager.Type.SWAMP);
+        villager.setProfession(Villager.Profession.LEATHERWORKER);
+        villager.setVillagerType(Villager.Type.SNOW);
         villager.setVillagerLevel(1);
         villager.setRestocksToday(2);
+        update();
 
         villager.getEquipment().setHelmet(getBeekeeperHead());
         villager.getEquipment().setHelmetDropChance(0.0F);
+        initializeTrades();
     }
 
     @Override
     public void workOnStation() {
-        moveToOwnWorkingStation();
-        getCurrentWorld().playSound(getWorkstationLocation(), Sound.BLOCK_BEEHIVE_SHEAR, 1000, 2);
-        getCurrentWorld().playSound(getVillager().getLocation(), Sound.ENTITY_VILLAGER_YES, 1000, 1);
+        getCurrentWorld().playSound(getWorkstationLocation(), Sound.BLOCK_BEEHIVE_SHEAR, 100,2);
+        getCurrentWorld().playSound(getVillager().getLocation(), Sound.ENTITY_VILLAGER_YES, 100, 1);
         Particle.ENTITY_EFFECT.builder()
                 .location(getVillager().getLocation())
                 .offset(0.5, 1, 0.5)
@@ -56,9 +58,64 @@ public class Beekeeper extends CustomVillager {
     }
 
     @Override
+    protected void initializeTrades() {
+        Random random = new Random();
+
+        //NOVICE
+        switch (getLevel().getNmsLevel()) {
+            case 5:{
+                merchant.setRecipe(5, rollFlowerRecipe());
+
+                MerchantRecipe retradeSugar = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextInt(3)), 16);
+                retradeSugar.addIngredient(new ItemStack(Material.SUGAR, random.nextInt(7, 17)));
+
+                merchant.setRecipe(6, retradeSugar);
+            }
+            case 4:{
+                merchant.setRecipe(4, rollFlowerRecipe());
+
+                MerchantRecipe retradeSugar = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextInt(3)), 16);
+                retradeSugar.addIngredient(new ItemStack(Material.SUGAR, random.nextInt(7, 17)));
+
+                merchant.setRecipe(5, retradeSugar);
+            }
+            case 3:{
+                merchant.setRecipe(3, rollFlowerRecipe());
+
+                MerchantRecipe retradeSugar = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextInt(3)), 16);
+                retradeSugar.addIngredient(new ItemStack(Material.SUGAR, random.nextInt(7, 17)));
+
+                merchant.setRecipe(4, retradeSugar);
+            }
+            case 2:{
+                merchant.setRecipe(2, rollFlowerRecipe());
+
+                MerchantRecipe retradeSugar = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextInt(3)), 16);
+                retradeSugar.addIngredient(new ItemStack(Material.SUGAR, random.nextInt(7, 17)));
+
+                merchant.setRecipe(3, retradeSugar);
+            }
+            case 1:{
+                merchant.setRecipe(0, rollFlowerRecipe());
+
+                MerchantRecipe retradeSugar = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextBoolean() ? 1 : 2), 16);
+                retradeSugar.addIngredient(new ItemStack(Material.SUGAR, random.nextInt(7, 17)));
+
+                merchant.setRecipe(1, retradeSugar);
+            }
+        }
+        merchantRecipes = merchant.getRecipes();
+        exportTrades(merchantRecipes);
+    }
+
+    @Override
     public void replenishTrades() {
-        PotionEffect potionEffect = PotionEffectType.GLOWING.createEffect(5, 255);
-        getVillager().addPotionEffect(potionEffect);
+        restock();
+    }
+
+    @Override
+    public List<MerchantRecipe> buildMerchant() {
+        return merchantRecipes;
     }
 
     private ItemStack getBeekeeperHead() {
@@ -72,5 +129,50 @@ public class Beekeeper extends CustomVillager {
         headMeta.setPlayerProfile(profile);
         head.setItemMeta(headMeta);
         return head;
+    }
+
+    private MerchantRecipe rollFlowerRecipe(){
+        Random random = new Random();
+        int balance = random.nextInt(15, 64);
+        MerchantRecipe merchantRecipe = new MerchantRecipe(new ItemStack(Material.EMERALD, 1), 16);
+        switch (random.nextInt(10)){
+            case 1: {
+                merchantRecipe.addIngredient(new ItemStack(Material.SUNFLOWER, balance));
+                break;
+            }
+            case 2: {
+                merchantRecipe.addIngredient(new ItemStack(Material.OXEYE_DAISY, balance));
+                break;
+            }
+            case 3: {
+                merchantRecipe.addIngredient(new ItemStack(Material.LILY_OF_THE_VALLEY, balance));
+                break;
+            }
+            case 4: {
+                merchantRecipe.addIngredient(new ItemStack(Material.DANDELION, balance));
+                break;
+            }
+            case 5: {
+                merchantRecipe.addIngredient(new ItemStack(Material.POPPY, balance));
+                break;
+            }
+            case 6: {
+                merchantRecipe.addIngredient(new ItemStack(Material.BLUE_ORCHID, balance));
+                break;
+            }
+            case 7: {
+                merchantRecipe.addIngredient(new ItemStack(Material.ALLIUM, balance));
+                break;
+            }
+            case 8: {
+                merchantRecipe.addIngredient(new ItemStack(Material.AZURE_BLUET, balance));
+                break;
+            }
+            case 9: {
+                merchantRecipe.addIngredient(new ItemStack(Material.RED_TULIP, balance));
+                break;
+            }
+        }
+        return merchantRecipe;
     }
 }

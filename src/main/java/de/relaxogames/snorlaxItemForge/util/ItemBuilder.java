@@ -9,7 +9,12 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,4 +91,29 @@ public class ItemBuilder {
                 .replace("{5}", leftFilling >= 5 ? "§a" : "§7")
                 .replace("{6}", leftFilling >= 6 ? "§a" : "§7"));
     }
+
+    public static byte[] serializeItem(ItemStack item) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             BukkitObjectOutputStream oos = new BukkitObjectOutputStream(out)) {
+
+            oos.writeObject(item);
+            return out.toByteArray();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ItemStack deserializeItem(byte[] data) {
+        try (ByteArrayInputStream in = new ByteArrayInputStream(data);
+             BukkitObjectInputStream ois = new BukkitObjectInputStream(in)) {
+
+            return (ItemStack) ois.readObject();
+
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }

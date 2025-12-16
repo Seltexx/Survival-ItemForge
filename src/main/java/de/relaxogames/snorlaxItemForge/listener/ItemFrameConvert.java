@@ -69,7 +69,7 @@ public class ItemFrameConvert implements Listener {
         holdedStack.setAmount(holdedStack.getAmount()-1);
         interacter.getInventory().addItem(converted);
 
-        clickedBlock.getWorld().playSound(clickedBlock.getLocation(), Sound.ENTITY_EVOKER_PREPARE_SUMMON, 1000, 1.3F);
+        clickedBlock.getWorld().playSound(clickedBlock.getLocation(), Sound.ENTITY_EVOKER_PREPARE_SUMMON, 100, 1.3F);
 
         cauldron.depleteLevel();
     }

@@ -38,6 +38,6 @@ public class WorkingStationBreak implements Listener {
 
         //if (customVillager.getWorkstationLocation() == null)return;
         Bukkit.broadcast(Component.text("REMOVED: " + owner.getUniqueId() + " BEI " + customVillager.getWorkstationLocation().toString()));
-        customVillager.removeWorkingstation();
+        customVillager.removeWorkingStation();
     }
 }

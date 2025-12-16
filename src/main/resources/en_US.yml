@@ -1,1 +1,22 @@
 "Item-Invisibility-Tincture": "Universal Tinktur"
+"Item-Tincture-Lore-1": " "
+"Item-Tincture-Lore-2": "&7Welche Geheimnisse diese Tinktur wohl bereithält?"
+"Item-Tincture-Lore-3": "&7&oDeine Dosis reicht nicht unbegrenzt lange!"
+"Item-Tincture-Lore-4": " "
+"Item-Tincture-Lore-5": "&7Aktuelle Füllung: &r&7{FILLING}"
+"Item-Tincture-Lore-6": " "
+
+"Item-Tincture-Filling": "{1}██{2}██{3}██{4}██{5}██{6}██"
+
+"Item-Itemframe-Name": "&cUnsichtbarer Rahmen"
+"Item-Itemframe-Lore-1": " "
+"Item-Itemframe-Lore-2": "&7Was die Universal Tinktur wohl verändert hat?"
+"Item-Itemframe-Lore-3": "&7Ganz vorsichtig! Fällt dieser zu Boden, ist er verschwunden!"
+
+"Item-Kaolin-Name": "Saccharin Pulver"
+"Item-Kaolin-Lore-1": "&7Ein wahrhafter Allrounder!"
+"Item-Kaolin-Lore-2": "&7Welche Tinkturen man wohl herstellen könnte?"
+
+"Dragonegg-Player-Left": "&cDas &4Drachenei &cist in das Ende zurückgekehrt!"
+
+"Beeworker-Title": "Imker"

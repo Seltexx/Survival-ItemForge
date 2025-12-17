@@ -4,6 +4,7 @@ import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.commands.TestCommand;
 import de.relaxogames.snorlaxItemForge.listener.*;
+import de.relaxogames.snorlaxItemForge.listener.happyghast.HappyGhastListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.BeekeeperListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
@@ -60,6 +61,7 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new VillagerListener(), this);
         pm.registerEvents(new BeekeeperListener(), this);
         pm.registerEvents(new WorkingStationBreak(), this);
+        pm.registerEvents(new HappyGhastListener(), this);
     }
 
     public static @NotNull Plugin getForge() {

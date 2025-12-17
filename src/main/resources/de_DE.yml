@@ -21,10 +21,10 @@
 
 "Beeworker-Title": "Imker"
 "Beeworker-Honey-Name": "&6Veredelter Honig"
-"Beeworker-Honey-Worst": "&7Qualität: &cMies"
-"Beeworker-Honey-Bad": "&7Qualität: &eMangelhaft"
-"Beeworker-Honey-Okay": "&7Qualität: &aOkay"
-"Beeworker-Honey-Best": "&7Qualität: &2Bestens"
+"Beeworker-Honey-Worst": "&7Qualität: &cMies" # 0.06
+"Beeworker-Honey-Bad": "&7Qualität: &eMangelhaft" # 0.07
+"Beeworker-Honey-Okay": "&7Qualität: &aOkay" # 0.09
+"Beeworker-Honey-Best": "&7Qualität: &2Bestens" # 0.1
 
 "Villager-Level-1": "&7Anfänger"
 "Villager-Level-2": "<#D8AF93>Lehrling"

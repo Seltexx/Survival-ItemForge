@@ -20,3 +20,19 @@
 "Dragonegg-Player-Left": "&cDas &4Drachenei &cist in das Ende zurückgekehrt!"
 
 "Beeworker-Title": "Imker"
+"Beeworker-Honey-Name": "&6Veredelter Honig"
+"Beeworker-Honey-Worst": "&7Qualität: &cMies"
+"Beeworker-Honey-Bad": "&7Qualität: &eMangelhaft"
+"Beeworker-Honey-Okay": "&7Qualität: &aOkay"
+"Beeworker-Honey-Best": "&7Qualität: &2Bestens"
+
+"Villager-Level-1": "&7Anfänger"
+"Villager-Level-2": "<#D8AF93>Lehrling"
+"Villager-Level-3": "&6Geselle"
+"Villager-Level-4": "&aExperte"
+"Villager-Level-5": "&bMeister"
+
+"Villager-Level-Station": "&fLevel: {LEVEL}"
+"Villager-Level-Bar-Title": "&fHandelslevel"
+
+"Firecracker-Title": "Feuerwerker"

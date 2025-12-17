@@ -74,7 +74,7 @@ public class CauldronListener implements Listener {
         if (!cauldron.hasData())return;
         if (!cauldron.containsTincture())return;
         e.setCancelled(true);
-        block.getWorld().playSound(block.getLocation(), Sound.ITEM_SHIELD_BREAK, 100, 0);
+        block.getWorld().playSound(block.getLocation(), Sound.ITEM_SHIELD_BREAK, 1F, 0);
     }
 
     @EventHandler
@@ -94,6 +94,6 @@ public class CauldronListener implements Listener {
         if (!cauldron.hasData()) return;
         if (!cauldron.containsTincture()) return;
         e.setCancelled(true);
-        block.getWorld().playSound(block.getLocation(), Sound.ITEM_OMINOUS_BOTTLE_DISPOSE, 100, 0);
+        block.getWorld().playSound(block.getLocation(), Sound.ITEM_OMINOUS_BOTTLE_DISPOSE, 1F, 0);
     }
 }

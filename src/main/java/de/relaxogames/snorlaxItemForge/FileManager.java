@@ -104,6 +104,26 @@ public class FileManager {
         return fc.getDouble("npc.villager-walk-speed", 0.6);
     }
 
+    public double villagerWorkingTableDisplayOffsetZ(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getDouble("npc.villager-station.text-display.offset-z", 0.5);
+    }
+
+    public double villagerWorkingTableDisplayOffsetY(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getDouble("npc.villager-station.text-display.offset-y", 1.25);
+    }
+
+    public double villagerWorkingTableDisplayOffsetX(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getDouble("npc.villager-station.text-display.offset-x", 0.5);
+    }
+
+    public int villagerRestockAmount(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getInt("npc.villager-amount-restock", 2);
+    }
+
     public int villagerWorkingTableSearch(){
         FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
         return fc.getInt("npc.villager-search-radius", 48);

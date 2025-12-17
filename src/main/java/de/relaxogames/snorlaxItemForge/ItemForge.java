@@ -7,10 +7,12 @@ import de.relaxogames.snorlaxItemForge.listener.*;
 import de.relaxogames.snorlaxItemForge.listener.villager.BeekeeperListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
-import de.relaxogames.snorlaxItemForge.util.villager.villagertyps.Beekeeper;
+import de.relaxogames.snorlaxItemForge.util.villager.VillagerWrapper;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 public final class ItemForge extends JavaPlugin {
 
@@ -33,6 +35,7 @@ public final class ItemForge extends JavaPlugin {
         lingo = new Lingo(getDataFolder());
         fileManager.loadMessages(lingo);
         Advancements.loadAll();
+        VillagerWrapper.startWorkClock();
     }
 
     @Override
@@ -51,7 +54,6 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new DisableListener(), this);
         pm.registerEvents(new ItemFrameConvert(), this);
         pm.registerEvents(new ItemFrameListener(), this);
-        pm.registerEvents(new EntityKillListener(), this);
         pm.registerEvents(new PebbleSnowballListener(), this);
         pm.registerEvents(new EnderDragonEggListener(), this);
 
@@ -60,7 +62,7 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new WorkingStationBreak(), this);
     }
 
-    public static ItemForge getForge() {
+    public static @NotNull Plugin getForge() {
         return instance;
     }
 

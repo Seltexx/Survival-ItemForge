@@ -20,7 +20,7 @@ public class TestCommand implements CommandExecutor {
                 if (!(entity instanceof Villager villager)) continue; // nur Villager berücksichtigen
                 CustomVillager villager1 = VillagerWrapper.from(villager);
                 if (villager1 == null) continue;
-                villager1.work();
+                villager1.work(true);
             }
         }
         return false;

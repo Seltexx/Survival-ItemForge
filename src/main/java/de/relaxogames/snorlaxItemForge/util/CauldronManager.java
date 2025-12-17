@@ -175,7 +175,7 @@ public class CauldronManager {
         }
 
         //Sound abspielen
-        cauldronLoc.getWorld().playSound(cauldronLoc, Sound.BLOCK_BREWING_STAND_BREW, 100, 1.5F);
+        cauldronLoc.getWorld().playSound(cauldronLoc, Sound.BLOCK_BREWING_STAND_BREW, 1F, 1.5F);
 
         // Partikel
         ParticleBuilder particleBuilder = Particle.WAX_OFF.builder();
@@ -227,7 +227,7 @@ public class CauldronManager {
             setLevel(0);
 
             //Sound Abspielen
-            cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_CAST_SPELL, 100, 0.7F);
+            cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_CAST_SPELL, 1F, 0.7F);
 
             // Partikel
             ParticleBuilder particleBuilder = Particle.WAX_OFF.builder();
@@ -269,7 +269,7 @@ public class CauldronManager {
         setLevel(getLevel() - 1);
 
         //Sound Abspielen
-        cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_PREPARE_ATTACK, 100, 1.5F);
+        cauldronLoc.getWorld().playSound(cauldronLoc, Sound.ENTITY_EVOKER_PREPARE_ATTACK, 1F, 1.5F);
         return;
     }
 

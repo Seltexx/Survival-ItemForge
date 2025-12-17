@@ -1,0 +1,40 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:player_head",
+      "components": {
+        "minecraft:profile": {
+          "properties": [
+            {
+              "name": "textures",
+              "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTBmY2UyZjkzYjYyZjgzY2E1N2NhYTJhM2NmYWFmMzI4OGMwOTZmNTI3NjM0MmVjMTg4MzA4NzAyNDFiZWJhMCJ9fX0="
+            }
+          ]
+        }
+      }
+    },
+    "title": {
+      "text": "Emsiges Pilotbienchen"
+    },
+    "description": {
+      "text": "Beschleunige deinen glücklichen Ghast mit veredeltem Honig"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "x": 3,
+    "y": 2
+  },
+  "criteria": {
+    "happy_ghast_honey": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "happy_ghast_honey"
+    ]
+  ],
+  "parent": "snorlax-itemforge:advancement_beekeeper_first_trade"
+}

@@ -3,12 +3,17 @@ package de.relaxogames.snorlaxItemForge.util.villager;
 import com.jeff_media.customblockdata.CustomBlockData;
 import de.relaxogames.snorlaxItemForge.FileManager;
 import de.relaxogames.snorlaxItemForge.ItemForge;
+import de.relaxogames.snorlaxItemForge.listener.villager.events.CustomVillagerWorkTickEvent;
 import de.relaxogames.snorlaxItemForge.util.villager.villagertyps.Beekeeper;
 import de.relaxogames.snorlaxItemForge.util.villager.villagertyps.Firecracker;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Villager;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class VillagerWrapper {
     private static FileManager fM = new FileManager();
@@ -91,4 +96,29 @@ public class VillagerWrapper {
         return foundProfession;
     }
 
+    static boolean running = false;
+    private static final Map<World, Long> lastBucket = new HashMap<>();
+
+    public static void startWorkClock() {
+        if (running) return;
+        running = true;
+
+        Bukkit.getScheduler().runTaskTimer(ItemForge.getForge(), () -> {
+            for (World world : Bukkit.getWorlds()) {
+
+                long time = world.getTime(); // 0–23999
+                long bucket = time / 1000;   // 0–23
+
+                Long last = lastBucket.get(world);
+                // Neues 1000-Tick-Fenster oder Time-Skip
+                if (last == null || bucket != last) {
+                    lastBucket.put(world, bucket);
+
+                    Bukkit.getPluginManager().callEvent(
+                            new CustomVillagerWorkTickEvent(world, time)
+                    );
+                }
+            }
+        }, 0L, 20L); // jede Sekunde
+    }
 }

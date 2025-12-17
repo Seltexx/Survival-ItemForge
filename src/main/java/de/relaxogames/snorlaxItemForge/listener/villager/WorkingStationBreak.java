@@ -37,7 +37,6 @@ public class WorkingStationBreak implements Listener {
         CustomVillager customVillager = VillagerWrapper.from(owner);
 
         //if (customVillager.getWorkstationLocation() == null)return;
-        Bukkit.broadcast(Component.text("REMOVED: " + owner.getUniqueId() + " BEI " + customVillager.getWorkstationLocation().toString()));
         customVillager.removeWorkingStation();
     }
 }

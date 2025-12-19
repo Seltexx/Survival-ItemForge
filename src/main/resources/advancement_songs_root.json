@@ -14,7 +14,7 @@
     "announce_to_chat": true,
     "hidden": false,
     "x": 1,
-    "y": 5
+    "y": 3
   },
   "criteria": {
     "criteria_needed": {
@@ -26,5 +26,5 @@
       "criteria_needed"
     ]
   ],
-  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
+  "parent": "snorlax-itemforge:advancement_firecracker"
 }

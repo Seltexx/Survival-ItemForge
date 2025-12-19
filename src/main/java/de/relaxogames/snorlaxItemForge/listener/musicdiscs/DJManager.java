@@ -21,12 +21,13 @@ public class DJManager {
 
     private FileManager fm = new FileManager();
 
+    private final NamespacedKey IS_ACTIVE = new NamespacedKey(ItemForge.getForge(), "disc_is_playing");
     private final NamespacedKey PLAYING_KEY = new NamespacedKey(ItemForge.getForge(), "currently_playing");
 
     public void playSong(MusicDiscs music, Block jukebx, List<Player> hearer){
         CustomBlockData cbdJBX = new CustomBlockData(jukebx, ItemForge.getForge());
         cbdJBX.set(PLAYING_KEY, PersistentDataType.INTEGER, music.getCustomModelData());
-
+        cbdJBX.set(IS_ACTIVE, PersistentDataType.BOOLEAN, true);
 
         Song song = NBSDecoder.parse(new File(FileManager.getDiscoFolder() + "//" + music.getFile() + ".nbs"));
 
@@ -43,7 +44,7 @@ public class DJManager {
     public void stopSong(Player player, Location location){
         for (SongPlayer all : NoteBlockAPI.getSongPlayersByPlayer(player)){
             if (!(all instanceof PositionSongPlayer psp))continue;
-            if (psp.getTargetLocation().distance(location) > 0.5)return;
+            if (psp.getTargetLocation().distance(location) > 2)return;
             psp.setPlaying(false);
             psp.destroy();
         }

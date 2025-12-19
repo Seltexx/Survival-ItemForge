@@ -2,6 +2,7 @@ package de.relaxogames.snorlaxItemForge.commands;
 
 import de.relaxogames.api.Lingo;
 import de.relaxogames.languages.Locale;
+import de.relaxogames.languages.ServerColors;
 import de.relaxogames.snorlaxItemForge.listener.musicdiscs.MusicDiscs;
 import de.relaxogames.snorlaxItemForge.util.ItemBuilder;
 import de.relaxogames.snorlaxItemForge.util.villager.CustomVillager;
@@ -21,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestCommand implements CommandExecutor {
@@ -76,6 +78,29 @@ public class TestCommand implements CommandExecutor {
                     MusicDiscs.LET_IT_SNOW.createItem(),
                     MusicDiscs.RICK_ROLL.createItem()
             );
+
+            List<Component> ammoLore = new ArrayList<>();
+            ammoLore.add(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Ammunition-Lore")));
+            ItemBuilder ammonation = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Ammunition-Name"))
+                    .color(ServerColors.Red3.color()), Material.FIREWORK_ROCKET, ammoLore);
+
+            ItemStack ammoFirework = ammonation.getItem();
+            ItemMeta ammoMeta = ammoFirework.getItemMeta();
+            ammoMeta.setCustomModelData(2006);
+            ammoFirework.setItemMeta(ammoMeta);
+            ammoFirework.setAmount(64);
+
+            List<Component> lore = new ArrayList<>();
+            lore.add(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Book-Lore")));
+            ItemBuilder enchantedBook = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Book-Name"))
+                    .color(NamedTextColor.WHITE), Material.ENCHANTED_BOOK, lore);
+
+            ItemStack executionerBook = enchantedBook.getItem();
+            ItemMeta testMeta = executionerBook.getItemMeta();
+            testMeta.setCustomModelData(80);
+            executionerBook.setItemMeta(testMeta);
+
+            p.getInventory().addItem(ammoFirework, executionerBook);
         }
         return false;
     }

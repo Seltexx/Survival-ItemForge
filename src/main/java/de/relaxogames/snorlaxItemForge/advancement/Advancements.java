@@ -34,7 +34,7 @@ public class Advancements {
     public static void loadAll() {
 
         for (Advancement advancement : Advancement.values()) {
-
+            if (advancement.getFileName().isEmpty())continue;
             NamespacedKey key = new NamespacedKey(
                     ItemForge.getForge(),
                     advancement.getFileName()
@@ -62,5 +62,11 @@ public class Advancements {
 
     public static Advancements playout(Player player, Advancement advancement) {
         return new Advancements(player, advancement);
+    }
+
+    public static void playout(Player player, Advancement advancement, String criteria){
+        NamespacedKey key = new NamespacedKey(ItemForge.getForge(), advancement.getFileName());
+        player.getAdvancementProgress(Bukkit.getAdvancement(key))
+                .awardCriteria(criteria);
     }
 }

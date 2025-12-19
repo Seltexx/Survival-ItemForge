@@ -99,10 +99,10 @@ public class Firecracker extends CustomVillager {
 
             if (random.nextBoolean()) {
                 MerchantRecipe gunpowederTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextBoolean() ? 1 : 2), 16);
-                gunpowederTrade.addIngredient(new ItemStack(Material.GUNPOWDER, random.nextInt(16, 32)));
+                gunpowederTrade.addIngredient(new ItemStack(Material.GUNPOWDER, random.nextInt(16, 20)));
                 trades.add(gunpowederTrade);
             } else {
-                MerchantRecipe redstoneTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, 8), 8);
+                MerchantRecipe redstoneTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, 3), 8);
                 redstoneTrade.addIngredient(new ItemStack(Material.REDSTONE, random.nextInt(16, 20)));
                 trades.add(redstoneTrade);
             }

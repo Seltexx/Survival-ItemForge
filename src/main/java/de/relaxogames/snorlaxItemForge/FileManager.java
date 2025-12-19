@@ -84,6 +84,7 @@ public class FileManager {
 
     private static void loadAdvancements(){
         for (Advancement advancement : Advancement.values()){
+            if (advancement.getFileName().isEmpty())continue;
             File brew_tincture = new File(advancementFolder,  advancement.getFileName() + ".json");
             try {
                 if (!brew_tincture.exists()) {

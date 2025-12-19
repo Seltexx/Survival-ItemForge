@@ -105,7 +105,7 @@ public class LightBlockListener implements Listener {
         if (!interacter.getInventory().getItemInMainHand().getType().equals(Material.LIGHT) && !interacter.getInventory().getItemInOffHand().getType().equals(Material.LIGHT))return;
         if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK))return;
         Block interact = e.getClickedBlock();
-        Light holdedLight = (Light) interact.getBlockData();
+        if (!(interact.getBlockData() instanceof Light holdedLight))return;
 
         int lvl = holdedLight.getLevel();
         interact.breakNaturally();

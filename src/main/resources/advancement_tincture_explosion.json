@@ -9,7 +9,7 @@
     "description": {
       "text": "Bringe eine Universal Tinktur, beim Brauvorgang, zum explodieren"
     },
-    "frame": "goal",
+    "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false,
@@ -25,7 +25,7 @@
     ["tincture_explosion"]
   ],
   "rewards": {
-    "experience": 0,
+    "experience": 50,
     "loot": [
       "minecraft:air"
     ]

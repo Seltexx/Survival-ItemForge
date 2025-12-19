@@ -43,6 +43,8 @@
 "Head-Drop-Book-Lore": "&7Kopfschuss"
 "Head-Drop-Ammunition-Name": "Knallerbsen"
 "Head-Drop-Ammunition-Lore": "&7Diese Mischung hats in sich!"
+"Head-Drop-Crossbow-Lore-Enchant-1": "&cAbgefeuerte Munition: &4{MUNITION}"
+"Head-Drop-Crossbow-Lore-Enchant-2": "&cGesammelte Köpfe: &4{HEADS}"
 
 "Music-Disc-YMCA-Name": "&cSchallplatte"
 "Music-Disc-YMCA-Lore": "&7Y.M.C.A. - Village People"

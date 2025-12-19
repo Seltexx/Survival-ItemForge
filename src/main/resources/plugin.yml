@@ -9,3 +9,5 @@ depend: [NoteBlockAPI]
 commands:
   debug:
     description: Help
+  team:
+    description: Open the team GUI

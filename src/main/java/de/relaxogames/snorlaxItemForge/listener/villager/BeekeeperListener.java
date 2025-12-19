@@ -2,10 +2,13 @@ package de.relaxogames.snorlaxItemForge.listener.villager;
 
 import com.destroystokyo.paper.entity.villager.Reputation;
 import com.destroystokyo.paper.entity.villager.ReputationType;
+import de.relaxogames.snorlaxItemForge.advancement.Advancement;
+import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.listener.villager.events.CustomVillagerWorkTickEvent;
 import de.relaxogames.snorlaxItemForge.listener.villager.events.PlayerEngageBeeOfBeekeeperEvent;
 import de.relaxogames.snorlaxItemForge.util.villager.CustomVillager;
 import de.relaxogames.snorlaxItemForge.util.villager.VillagerWrapper;
+import io.papermc.paper.event.player.PlayerTradeEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -98,6 +101,19 @@ public class BeekeeperListener implements Listener {
                 Component.text("🐝 Die Imker sind wütend!")
                         .color(NamedTextColor.RED)
         );
+    }
+
+    @EventHandler
+    public void onTrade(PlayerTradeEvent e){
+        Player trader = e.getPlayer();
+        Villager villager = (Villager) e.getVillager();
+
+        if (villager == null || villager.isDead())return;
+        CustomVillager customVillager = VillagerWrapper.load(villager);
+        if (customVillager == null)return;
+        if (customVillager.getProfession() == null)return;
+        if (!customVillager.getProfession().equals(CustomVillager.Profession.BEEKEEPER))return;
+        Advancements.playout(trader, Advancement.BEEKEEPER_FIRSTSTRADE);
     }
 
     private void increasePrices(Villager villager, float multiplier) {

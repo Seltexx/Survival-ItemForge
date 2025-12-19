@@ -1,6 +1,7 @@
 package de.relaxogames.snorlaxItemForge.listener.happyghast;
 
 import org.bukkit.boss.BossBar;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HappyGhast;
 import org.bukkit.entity.Player;
 
@@ -26,7 +27,7 @@ public interface HippyGhast {
 
     /* -------------------- RIDERS -------------------- */
 
-    List<UUID> getRider();
+    List<Entity> getRider();
     void addRider(Player player);
     void removeRider(Player player);
     boolean isRider(Player player);

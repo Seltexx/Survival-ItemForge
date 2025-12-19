@@ -96,7 +96,7 @@ public class VillagerWrapper {
         return foundProfession;
     }
 
-    static boolean running = false;
+    private static boolean running = false;
     private static final Map<World, Long> lastBucket = new HashMap<>();
 
     public static void startWorkClock() {
@@ -105,15 +105,12 @@ public class VillagerWrapper {
 
         Bukkit.getScheduler().runTaskTimer(ItemForge.getForge(), () -> {
             for (World world : Bukkit.getWorlds()) {
-
                 long time = world.getTime(); // 0–23999
                 long bucket = time / 1000;   // 0–23
 
                 Long last = lastBucket.get(world);
-                // Neues 1000-Tick-Fenster oder Time-Skip
                 if (last == null || bucket != last) {
                     lastBucket.put(world, bucket);
-
                     Bukkit.getPluginManager().callEvent(
                             new CustomVillagerWorkTickEvent(world, time)
                     );

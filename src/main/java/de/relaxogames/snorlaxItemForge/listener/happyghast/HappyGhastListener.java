@@ -35,25 +35,25 @@ public class HappyGhastListener implements Listener {
 
         switch (inHand.getItemMeta().getCustomModelData()){
             case 111:{
-                happyGhast.applySpeed(0.06, 20);
+                happyGhast.applySpeed(0.06, 450);
                 e.setCancelled(true);
                 break;
             }
 
             case 222:{
-                happyGhast.applySpeed(0.07, 20);
+                happyGhast.applySpeed(0.07, 400);
                 e.setCancelled(true);
                 break;
             }
 
             case 333:{
-                happyGhast.applySpeed(0.09, 20);
+                happyGhast.applySpeed(0.09, 350);
                 e.setCancelled(true);
                 break;
             }
 
             case 444:{
-                happyGhast.applySpeed(0.1, 20);
+                happyGhast.applySpeed(0.1, 300);
                 e.setCancelled(true);
                 break;
             }
@@ -81,21 +81,6 @@ public class HappyGhastListener implements Listener {
         HippyGhast hippyGhast = new CustomGhast(ghast);
 
         hippyGhast.removeRider(rider);
-    }
-
-    @EventHandler
-    public void onTick(EntityEffectTickEvent e){
-        if (!(e.getEntity() instanceof HappyGhast ghast))return;
-        HippyGhast hippyGhast = new CustomGhast(ghast);
-        int start = hippyGhast.getStartDuration();
-        int current = hippyGhast.getDuration();
-
-        double progress = start <= 0
-                ? 0.0
-                : Math.max(0.0, Math.min(1.0, (double) current / start));
-
-        hippyGhast.bossbar().setProgress(progress);
-        if (progress == 0)hippyGhast.removeSpeed();
     }
 
     @EventHandler

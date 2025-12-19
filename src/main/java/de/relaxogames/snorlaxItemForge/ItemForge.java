@@ -5,15 +5,14 @@ import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.commands.TestCommand;
 import de.relaxogames.snorlaxItemForge.listener.*;
 import de.relaxogames.snorlaxItemForge.listener.happyghast.HappyGhastListener;
+import de.relaxogames.snorlaxItemForge.listener.musicdiscs.MusicListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.BeekeeperListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
 import de.relaxogames.snorlaxItemForge.util.villager.VillagerWrapper;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 public final class ItemForge extends JavaPlugin {
 
@@ -55,8 +54,11 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new DisableListener(), this);
         pm.registerEvents(new ItemFrameConvert(), this);
         pm.registerEvents(new ItemFrameListener(), this);
+        pm.registerEvents(new LightConverter(), this);
+        pm.registerEvents(new LightBlockListener(), this);
         pm.registerEvents(new PebbleSnowballListener(), this);
         pm.registerEvents(new EnderDragonEggListener(), this);
+        pm.registerEvents(new MusicListener(), this);
 
         pm.registerEvents(new VillagerListener(), this);
         pm.registerEvents(new BeekeeperListener(), this);
@@ -64,7 +66,7 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new HappyGhastListener(), this);
     }
 
-    public static @NotNull Plugin getForge() {
+    public static ItemForge getForge() {
         return instance;
     }
 

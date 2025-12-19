@@ -7,7 +7,14 @@ public enum Advancement {
     PEBBLED_SNOWBALL("advancement_pebbled_snowball_hit", "pebbled_snowball_hit"),
     BEEKEEPER_FIRSTSTRADE("advancement_beekeeper_first_trade", "trade_beekeeper"),
     PILOT_BEE("advancement_beekeeper_pilotbee", "happy_ghast_honey"),
-    PEBBLED_SNOWBALL_DEATH("advancement_pebbled_snowball_death", "pebbled_snowball_death");
+    PEBBLED_SNOWBALL_DEATH("advancement_pebbled_snowball_death", "pebbled_snowball_death"),
+
+    LISTENED_TO_YMCA("advancement_disc_ymca", "listend_YMCA"),
+    LISTENED_TO_RICKROLL("advancement_disc_rickroll", "listened_rickroll"),
+    LISTENED_TO_GREEK_WINE("advancement_disc_rickroll", "listened_rickroll"),
+    LISTENED_TO_GRAVITY_FALLS_THEME("advancement_disc_rickroll", "listened_rickroll"),
+    LISTENED_TO_BEETHOVENS_NO5("advancement_disc_rickroll", "listened_rickroll"),
+    LISTENED_TO_LET_IT_SNOW("advancement_disc_rickroll", "listened_rickroll");
 
     String fileName;
     String trigger;

@@ -8,16 +8,20 @@ import org.jetbrains.annotations.NotNull;
 public class CustomVillagerWorkTickEvent extends Event {
 
     private static final HandlerList HANDLERS_LIST = new HandlerList();
-    private long time;
-    private World world;
+    private final long time;
+    private final World world;
 
     public CustomVillagerWorkTickEvent(World world, long time) {
-        this.time = time;
         this.world = world;
+        this.time = time;
     }
 
     public long getTime() {
         return time;
+    }
+
+    public World getWorld() {
+        return world;
     }
 
     @Override
@@ -28,5 +32,4 @@ public class CustomVillagerWorkTickEvent extends Event {
     public static HandlerList getHandlerList() {
         return HANDLERS_LIST;
     }
-
 }

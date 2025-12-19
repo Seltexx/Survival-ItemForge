@@ -2,6 +2,7 @@ package de.relaxogames.snorlaxItemForge.commands;
 
 import de.relaxogames.api.Lingo;
 import de.relaxogames.languages.Locale;
+import de.relaxogames.snorlaxItemForge.listener.musicdiscs.MusicDiscs;
 import de.relaxogames.snorlaxItemForge.util.ItemBuilder;
 import de.relaxogames.snorlaxItemForge.util.villager.CustomVillager;
 import de.relaxogames.snorlaxItemForge.util.villager.VillagerWrapper;
@@ -66,6 +67,15 @@ public class TestCommand implements CommandExecutor {
             hm4.setItemMeta(hmm4);
 
             p.getInventory().addItem(honey, hm2, hm3, hm4);
+
+            p.getInventory().addItem(
+                    MusicDiscs.YMCA.createItem(),
+                    MusicDiscs.BEETHOVENS_NO5.createItem(),
+                    MusicDiscs.GRAVITY_FALL_THEME.createItem(),
+                    MusicDiscs.GRIECHISCHER_WEIN.createItem(),
+                    MusicDiscs.LET_IT_SNOW.createItem(),
+                    MusicDiscs.RICK_ROLL.createItem()
+            );
         }
         return false;
     }

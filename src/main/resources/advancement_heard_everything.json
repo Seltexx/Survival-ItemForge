@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:beehive"
+    },
+    "title": {
+      "text": "Rum gekommen in der Welt"
+    },
+    "description": {
+      "text": "Höre alle Schallplatten des Feuerwerkers"
+    },
+    "frame": "challange",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "x": 1,
+    "y": 2
+  },
+  "criteria": {
+    "listend_YMCA": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "listend_YMCA"
+    ]
+  ],
+  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
+}

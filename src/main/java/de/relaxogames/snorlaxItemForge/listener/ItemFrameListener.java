@@ -33,16 +33,13 @@ public class ItemFrameListener implements Listener {
     @EventHandler
     public void onItemSwitchToFrame(PlayerItemHeldEvent e) {
         Player itemOwner = e.getPlayer();
-        double corX = itemOwner.getX();
-        double corY = itemOwner.getY();
-        double corZ = itemOwner.getZ();
 
         ItemStack nowHolding = itemOwner.getInventory().getItem(e.getNewSlot());
 
         if (nowHolding == null || nowHolding.getItemMeta() == null) return;
         if (!nowHolding.getItemMeta().hasCustomModelData() || nowHolding.getItemMeta().getCustomModelData() != 35)
             return;
-        for (Entity entitiesNearby : itemOwner.getLocation().getNearbyEntities(corX, corY, corZ)) {
+        for (Entity entitiesNearby : itemOwner.getLocation().getNearbyEntities(25, 25, 25)) {
             if (!(entitiesNearby instanceof ItemFrame frame)) continue;
             boolean isInvisFrame = frame.getPersistentDataContainer().get(INVIS_FRAME, PersistentDataType.BOOLEAN) == null ? false : frame.getPersistentDataContainer().get(INVIS_FRAME, PersistentDataType.BOOLEAN);
             if (isInvisFrame) frame.setVisible(true);

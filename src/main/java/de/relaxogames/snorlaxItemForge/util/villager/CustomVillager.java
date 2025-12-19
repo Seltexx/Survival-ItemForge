@@ -664,9 +664,9 @@ public abstract class CustomVillager {
     public enum Level{
         NOVICE("novice", 1, 10),
         APPRENTICE("apprentice", 2, 15),
-        JOURNEYMAN("journeyman", 3, 20),
-        EXPERT("expert", 4, 30),
-        MASTER("master", 5, 45);
+        JOURNEYMAN("journeyman", 3, 15),
+        EXPERT("expert", 4, 20),
+        MASTER("master", 5, 20);
 
         String key;
         int nmsLevel;

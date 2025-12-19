@@ -25,8 +25,7 @@ java {
 dependencies {
     paperweight.paperDevBundle("1.21.10-R0.1-SNAPSHOT")
 
-    implementation 'com.github.koca2000:NoteBlockAPI:1.6.2'
-    shadow        'com.github.koca2000:NoteBlockAPI:1.6.2'
+    compileOnly('com.github.koca2000:NoteBlockAPI:1.6.2')
 
     implementation 'de.relaxogames:LingoAPI:inDev-1.7-RC01'
     shadow        ("de.relaxogames:LingoAPI:inDev-1.7-RC01")

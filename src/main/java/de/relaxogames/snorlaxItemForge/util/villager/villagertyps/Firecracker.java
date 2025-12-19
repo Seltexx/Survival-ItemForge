@@ -12,6 +12,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
+import org.bukkit.block.data.type.Light;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.Listener;
@@ -19,6 +20,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Merchant;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.meta.BlockDataMeta;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -85,154 +88,122 @@ public class Firecracker extends CustomVillager {
         // LEVEL 1 → 2 Trades
         if (level >= 1 && trades.size() < 2) {
 
+            if (random.nextBoolean()){
+                MerchantRecipe slimeTrade = new MerchantRecipe(new ItemStack(Material.SLIME_BALL, 2), 8);
+                slimeTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(2, 4)));
+                trades.add(slimeTrade);
+            }else {
+                MerchantRecipe fireworkTrade = new MerchantRecipe(new ItemStack(Material.FIREWORK_ROCKET, 3), 8);
+                fireworkTrade.addIngredient(new ItemStack(Material.EMERALD, 2));
+                trades.add(fireworkTrade);
+
+            }
+
             if (random.nextBoolean()) {
-                MerchantRecipe sugarTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextBoolean() ? 1 : 2), 8);
-                sugarTrade.addIngredient(new ItemStack(Material.SUGAR, random.nextInt(7, 17)));
-                trades.add(sugarTrade);
+                MerchantRecipe gunpowederTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextBoolean() ? 1 : 2), 16);
+                gunpowederTrade.addIngredient(new ItemStack(Material.GUNPOWDER, random.nextInt(16, 32)));
+                trades.add(gunpowederTrade);
             } else {
-                MerchantRecipe honeyTrade =
-                        new MerchantRecipe(new ItemStack(Material.EMERALD, 1), 8);
-                honeyTrade.addIngredient(
-                        new ItemStack(Material.HONEY_BOTTLE, random.nextInt(6, 12)));
-                trades.add(honeyTrade);
+                MerchantRecipe redstoneTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, 8), 8);
+                redstoneTrade.addIngredient(new ItemStack(Material.REDSTONE, random.nextInt(16, 20)));
+                trades.add(redstoneTrade);
             }
         }
 
         // LEVEL 2 → 4 Trades
         if (level >= 2 && trades.size() < 4) {
 
-            MerchantRecipe beeHiveTrade = new MerchantRecipe(new ItemStack(Material.BEEHIVE, 1), 8);
-            beeHiveTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(5, 11)));
-            trades.add(beeHiveTrade);
+            ItemStack lightItem = new ItemStack(Material.LIGHT, 1);
+            BlockDataMeta meta = (BlockDataMeta) lightItem.getItemMeta();
+            Light lightData = (Light) Bukkit.createBlockData(Material.LIGHT);
+            lightData.setLevel(0);
+            meta.setCustomModelData(100);
+            meta.setBlockData(lightData);
+            meta.customName(Component.text(
+                    Lingo.getLibrary().getMessage(Locale.GERMAN, "Light-Block-Name").replace("{LEVEL}", String.valueOf(0))
+            ));
+            lightItem.setItemMeta(meta);
 
-            MerchantRecipe honeyComb = new MerchantRecipe(new ItemStack(Material.EMERALD, 1), 8);
-            honeyComb.addIngredient(new ItemStack(Material.HONEYCOMB, random.nextInt(3, 5)));
-            trades.add(honeyComb);
+            MerchantRecipe lightTrade = new MerchantRecipe(lightItem, 8);
+            lightTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(2, 11)));
+            trades.add(lightTrade);
+
+            MerchantRecipe tripWireHookTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, 1), 16);
+            tripWireHookTrade.addIngredient(new ItemStack(Material.TRIPWIRE_HOOK, random.nextInt(6, 8)));
+            trades.add(tripWireHookTrade);
         }
 
         // LEVEL 3 → 6 Trades
         if (level >= 3 && trades.size() < 6) {
 
-            if (random.nextBoolean()) {
-
-                MerchantRecipe honeyCombBlockTrade = new MerchantRecipe(new ItemStack(Material.HONEYCOMB_BLOCK, 1), 8);
-                honeyCombBlockTrade.addIngredient(new ItemStack(Material.HONEYCOMB, 3));
-                honeyCombBlockTrade.addIngredient(new ItemStack(Material.EMERALD, 1));
-                trades.add(honeyCombBlockTrade);
-            } else {
-                List<Component> lore = new ArrayList<>();
-                for (int d = 1; d <= 2; d++) {
-                    String key = "Item-Kaolin-Lore-" + d;
-                    String message = Lingo.getLibrary().getMessage(Locale.GERMAN, key);
-                    lore.add(Component.text(message));
-                }
-                ItemBuilder sugar = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Item-Kaolin-Name"))
-                        .color(NamedTextColor.WHITE), Material.SUGAR, lore);
-
-                ItemStack kaolin = sugar.getItem();
-                ItemMeta meta = kaolin.getItemMeta();
-                meta.setCustomModelData(12);
-                kaolin.setItemMeta(meta);
-                MerchantRecipe saccarinTrade = new MerchantRecipe(kaolin, 8);
-                saccarinTrade.addIngredient(new ItemStack(Material.SUGAR, 1));
-                saccarinTrade.addIngredient(new ItemStack(Material.HONEY_BOTTLE, 2));
-                trades.add(saccarinTrade);
+            if (random.nextBoolean()){
+                MerchantRecipe paperTrade = new MerchantRecipe(new ItemStack(Material.EMERALD), 16);
+                paperTrade.addIngredient(new ItemStack(Material.PAPER, random.nextInt(8, 16)));
+                trades.add(paperTrade);
+            }else {
+                MerchantRecipe paperTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, 3), 16);
+                paperTrade.addIngredient(new ItemStack(Material.FIREWORK_STAR, random.nextInt(2, 4)));
+                trades.add(paperTrade);
             }
-            MerchantRecipe bannerPatternTrade = new MerchantRecipe(new ItemStack(Material.FLOWER_BANNER_PATTERN, 1), 8);
-            bannerPatternTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(2, 3)));
-            trades.add(bannerPatternTrade);
+
+            MerchantRecipe discTrade = new MerchantRecipe(rollRandomDisc(), 1);
+            discTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(23, 48)));
+            trades.add(discTrade);
         }
+              // LEVEL 4 → 8 Trades
+          if (level >= 4 && trades.size() < 8) {
+              /// AMMOOOO
+              List<Component> ammoLore = new ArrayList<>();
+              ammoLore.add(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Ammunition-Lore")));
+              ItemBuilder ammonation = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Ammunition-Name"))
+                      .color(ServerColors.Red3.color()), Material.FIREWORK_ROCKET, ammoLore);
 
-        // LEVEL 4 → 8 Trades
-        if (level >= 4 && trades.size() < 8) {
-            MerchantRecipe bannerTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, 2), 8);
-            bannerTrade.addIngredient(new ItemStack(Material.ORANGE_BANNER, 1));
-            trades.add(bannerTrade);
+              ItemStack ammoFirework = ammonation.getItem();
+              ItemMeta ammoMeta = ammoFirework.getItemMeta();
+              ammoMeta.setCustomModelData(2006);
+              ammoFirework.setItemMeta(ammoMeta);
+              ammoFirework.setAmount(2);
 
-            MerchantRecipe campfireTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextInt(2, 3)), 8);
-            campfireTrade.addIngredient(new ItemStack(Material.CAMPFIRE, 1));
-            trades.add(campfireTrade);
+              MerchantRecipe ammoTrade = new MerchantRecipe(ammoFirework, 8);
+              ammoTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(4, 6)));
+              ammoTrade.addIngredient(new ItemStack(Material.FIREWORK_ROCKET, 2));
+              trades.add(ammoTrade);
 
-        }
+              /// BOOOK
+              List<Component> lore = new ArrayList<>();
+              lore.add(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Book-Lore")));
+              ItemBuilder enchantedBook = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Head-Drop-Book-Name"))
+                      .color(NamedTextColor.WHITE), Material.ENCHANTED_BOOK, lore);
+
+              ItemStack executionerBook = enchantedBook.getItem();
+              ItemMeta meta = executionerBook.getItemMeta();
+              meta.setCustomModelData(80);
+              executionerBook.setItemMeta(meta);
+
+              MerchantRecipe bookTrade = new MerchantRecipe(executionerBook, 8);
+              bookTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(16, 64)));
+              bookTrade.addIngredient(new ItemStack(Material.BOOK, 1));
+              trades.add(bookTrade);
+
+          }
 
         // LEVEL 5 → 10 Trades
-        if (level >= 5 && trades.size() < 10) {
+        if (level >= 5 && trades.size() < 9) {
+            ItemStack fireWork4 = new ItemStack(Material.FIREWORK_ROCKET);
+            FireworkMeta power4Meta = (FireworkMeta) fireWork4.getItemMeta();
+            power4Meta.setPower(4);
+            power4Meta.setCustomModelData(4);
+            fireWork4.setItemMeta(power4Meta);
 
-            String key = "Beeworker-Honey-";
+            ItemStack fireWork3 = new ItemStack(Material.FIREWORK_ROCKET, 4);
+            FireworkMeta power3Meta = (FireworkMeta) fireWork3.getItemMeta();
+            power3Meta.setPower(3);
+            fireWork3.setItemMeta(power3Meta);
 
-            ItemStack honey = null;
-            int price = 10;
-            switch (random.nextInt(1, 4)) {
-                case 1: {
-                    key = key + "Worst";
-                    ItemBuilder honeyBottle = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Beeworker-Honey-Name"))
-                            .color(NamedTextColor.GOLD), Material.HONEY_BOTTLE, List.of(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, key))));
-
-                    honey = honeyBottle.getItem();
-                    ItemMeta meta = honey.getItemMeta();
-                    meta.setCustomModelData(111);
-                    meta.setMaxStackSize(16);
-                    honey.setItemMeta(meta);
-                    honey.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-                    honey.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    price = random.nextInt(3, 4);
-                    break;
-                }
-
-                case 2: {
-                    key = key + "Bad";
-                    ItemBuilder honeyBottle = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Beeworker-Honey-Name"))
-                            .color(NamedTextColor.GOLD), Material.HONEY_BOTTLE, List.of(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, key))));
-
-                    honey = honeyBottle.getItem();
-                    ItemMeta meta = honey.getItemMeta();
-                    meta.setCustomModelData(222);
-                    meta.setMaxStackSize(16);
-                    honey.setItemMeta(meta);
-                    honey.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-                    honey.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    price = random.nextInt(4, 5);
-                    break;
-                }
-
-                case 3: {
-                    key = key + "Okay";
-                    ItemBuilder honeyBottle = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Beeworker-Honey-Name"))
-                            .color(NamedTextColor.GOLD), Material.HONEY_BOTTLE, List.of(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, key))));
-
-                    honey = honeyBottle.getItem();
-                    ItemMeta meta = honey.getItemMeta();
-                    meta.setCustomModelData(333);
-                    meta.setMaxStackSize(16);
-                    honey.setItemMeta(meta);
-                    honey.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-                    honey.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    price = random.nextInt(5, 6);
-                    break;
-                }
-
-                case 4: {
-                    key = key + "Best";
-                    ItemBuilder honeyBottle = new ItemBuilder(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Beeworker-Honey-Name"))
-                            .color(NamedTextColor.GOLD), Material.HONEY_BOTTLE, List.of(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, key))));
-
-                    honey = honeyBottle.getItem();
-                    ItemMeta meta = honey.getItemMeta();
-                    meta.setCustomModelData(444);
-                    meta.setMaxStackSize(16);
-                    honey.setItemMeta(meta);
-                    honey.addUnsafeEnchantment(Enchantment.UNBREAKING, 1);
-                    honey.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    price = random.nextInt(5, 7);
-                    break;
-                }
-
-            }
-
-            if (honey == null) honey = new ItemStack(Material.POPPY);
-            MerchantRecipe honeyTrade = new MerchantRecipe(honey, 4);
-            honeyTrade.addIngredient(new ItemStack(Material.EMERALD, price));
-            trades.add(honeyTrade);
+            MerchantRecipe ammoTrade = new MerchantRecipe(fireWork4, 16);
+            ammoTrade.addIngredient(new ItemStack(Material.EMERALD, random.nextInt(4, 16)));
+            ammoTrade.addIngredient(fireWork3);
+            trades.add(ammoTrade);
         }
 
         reimportTrades(trades);
@@ -260,6 +231,87 @@ public class Firecracker extends CustomVillager {
         headMeta.setPlayerProfile(profile);
         head.setItemMeta(headMeta);
         return head;
+    }
+
+    public ItemStack rollRandomDisc(){
+        Random random = new Random();
+
+        Material discMat = Material.MUSIC_DISC_5;
+        int discID = -1;
+        String discKey = "";
+        List<Component> lore = new ArrayList<>();
+
+
+        switch (random.nextInt(1, 6)){
+
+            //WENN HIER WAS ANGEPASST WIRD UNBEDINGT IM JUKEBOXLISTENER getByID auch ändern!
+            case 1:{
+                discMat = Material.MUSIC_DISC_CHIRP;
+                discID = 1978;
+                discKey = "YMCA";
+                lore.add(Component.text(
+                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-YMCA-Lore")
+                ));
+                break;
+            }
+            case 2:{
+                discMat = Material.MUSIC_DISC_11;
+                discID = 1808;
+                discKey = "BH-5";
+                lore.add(Component.text(
+                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-BH-5-Lore")
+                ));
+                break;
+            }
+            case 3:{
+                discMat = Material.MUSIC_DISC_RELIC;
+                discID = 2020;
+                discKey = "GF";
+                lore.add(Component.text(
+                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-GF-Lore")
+                ));
+                break;
+            }
+            case 4:{
+                discMat = Material.MUSIC_DISC_PIGSTEP;
+                discID = 1970;
+                discKey = "GRIECHISCH";
+                lore.add(Component.text(
+                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-GRIECHISCH-Lore")
+                ));
+                break;
+            }
+            case 5:{
+                discMat = Material.MUSIC_DISC_LAVA_CHICKEN;
+                discID = 1960;
+                discKey = "RICKROLL";
+                lore.add(Component.text(
+                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-RICKROLL-Lore")
+                ));
+                break;
+            }
+            case 6:{
+                discMat = Material.MUSIC_DISC_TEARS;
+                discID = 241225;
+                discKey = "CHRISTMAS-25";
+                lore.add(Component.text(
+                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-CHRISTMAS-25-Lore")
+                ));
+                break;
+            }
+        }
+
+        ItemStack musicDisco = new ItemStack(discMat, 1);
+        ItemMeta meta = musicDisco.getItemMeta();
+        meta.setCustomModelData(discID);
+        meta.lore(lore);
+        meta.customName(Component.text(
+                Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-"+ discKey +"-Name")
+        ));
+        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+        meta.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS);
+        musicDisco.setItemMeta(meta);
+        return musicDisco;
     }
 
     static class FirecrackerListener implements Listener {

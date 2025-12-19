@@ -4,8 +4,10 @@ import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import de.relaxogames.api.Lingo;
 import de.relaxogames.languages.Locale;
+import de.relaxogames.snorlaxItemForge.ItemForge;
 import de.relaxogames.snorlaxItemForge.advancement.Advancement;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
+import de.relaxogames.snorlaxItemForge.listener.villager.BeekeeperListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.events.CustomVillagerWorkTickEvent;
 import de.relaxogames.snorlaxItemForge.util.ItemBuilder;
 import de.relaxogames.snorlaxItemForge.util.villager.CustomVillager;
@@ -81,7 +83,7 @@ public class Beekeeper extends CustomVillager {
             trades.add(rollFlowerRecipe());
 
             if (random.nextBoolean()) {
-                MerchantRecipe sugarTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, random.nextBoolean() ? 1 : 2), 8);
+                MerchantRecipe sugarTrade = new MerchantRecipe(new ItemStack(Material.EMERALD, 1), 8);
                 sugarTrade.addIngredient(new ItemStack(Material.SUGAR, random.nextInt(7, 17)));
                 trades.add(sugarTrade);
             } else {
@@ -300,34 +302,5 @@ public class Beekeeper extends CustomVillager {
             }
         }
         return merchantRecipe;
-    }
-
-    class BeekeeperListener implements Listener {
-        boolean worked = false;
-
-        @EventHandler
-        public void onTick(CustomVillagerWorkTickEvent e) {
-            if (e.getTime() > 2000 && e.getTime() < 2500 && !worked) {
-                worked = true;
-                work(false);
-            }
-
-            if (e.getTime() >= 2500) {
-                worked = false;
-            }
-        }
-
-        @EventHandler
-        public void onTrade(PlayerTradeEvent e){
-            Player trader = e.getPlayer();
-            Villager villager = (Villager) e.getVillager();
-
-            if (villager == null || villager.isDead())return;
-            CustomVillager customVillager = VillagerWrapper.load(villager);
-            if (customVillager == null)return;
-            if (customVillager.getProfession() == null)return;
-            if (!customVillager.getProfession().equals(Profession.BEEKEEPER))return;
-            Advancements.playout(trader, Advancement.BEEKEEPER_FIRSTSTRADE);
-        }
     }
 }

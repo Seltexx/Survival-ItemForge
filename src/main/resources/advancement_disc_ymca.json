@@ -1,0 +1,30 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:beehive"
+    },
+    "title": {
+      "text": "YMCA"
+    },
+    "description": {
+      "text": "Handle mit einem der neuen Imker"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "x": 1,
+    "y": 2
+  },
+  "criteria": {
+    "listend_YMCA": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "listend_YMCA"
+    ]
+  ],
+  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
+}

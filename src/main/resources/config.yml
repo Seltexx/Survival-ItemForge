@@ -11,9 +11,12 @@ npc:
   villager-search-radius: 48
   villager-sprinting-speed: 0.6
   villager-walk-speed: 0.5
-  villager-amount-restock: 2
+  villager-amount-restock: 20
   villager-station:
     text-display:
       offset-x: 0.5
       offset-y: 1.25
       offset-z: 0.5
+
+jukebox:
+  music-distance: 64 #Blocks

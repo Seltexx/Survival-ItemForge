@@ -54,13 +54,18 @@ public class VillagerListener implements Listener {
 
     @EventHandler
     public void onCustomWorkTick(CustomVillagerWorkTickEvent e) {
-        for (World world : Bukkit.getWorlds()) {
-            for (Villager villager : world.getEntitiesByClass(Villager.class)) {
+        // Nur Villager in der Welt dieses Events bearbeiten
+        World world = e.getWorld();
 
+        for (Villager villager : world.getEntitiesByClass(Villager.class)) {
+            // VillagerWrapper.load ist Reflection-heavy -> try/catch + null check
+            try {
                 CustomVillager cv = VillagerWrapper.load(villager);
-                if (cv == null) continue;
-
-                cv.work(false);
+                if (cv != null) {
+                    cv.work(false);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace(); // Fehler loggen, Server nicht stoppen
             }
         }
     }

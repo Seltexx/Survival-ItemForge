@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancement;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
+import de.relaxogames.snorlaxItemForge.listener.musicdiscs.MusicDiscs;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -18,6 +19,7 @@ public class FileManager {
     public static File datafolder;
     public static File langFolder;
     public static File advancementFolder;
+    public static File discoFolder;
     public static File config;
     private static List<File> list = new ArrayList<>();
 
@@ -25,6 +27,7 @@ public class FileManager {
         datafolder = ItemForge.getForge().getDataFolder();
         langFolder = new File(datafolder + "//languages");
         advancementFolder = new File(datafolder + "//advancements");
+        discoFolder = new File(datafolder + "//music");
 
         if (!datafolder.exists()){
             datafolder.mkdir();
@@ -34,6 +37,9 @@ public class FileManager {
         }
         if (!advancementFolder.exists()){
             advancementFolder.mkdir();
+        }
+        if (!discoFolder.exists()){
+            discoFolder.mkdir();
         }
 
         File deFile = new File(langFolder, "de_DE.yml");
@@ -73,6 +79,7 @@ public class FileManager {
         list.add(enFile);
 
         loadAdvancements();
+        loadSongs();
     }
 
     private static void loadAdvancements(){
@@ -90,8 +97,28 @@ public class FileManager {
         }
     }
 
+    private static void loadSongs(){
+        for (MusicDiscs music : MusicDiscs.values()){
+            File nbsFile = new File(discoFolder,  music.getFile() + ".nbs");
+            try {
+                if (!nbsFile.exists()) {
+                    InputStream in = ItemForge.getForge().getResource(music.getFile() + ".nbs");
+                    Files.copy(in, nbsFile.toPath());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public void loadMessages(Lingo lingo){
         lingo.loadMessages(list);
+    }
+
+    public int jukeboxMaxDistance(){
+        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
+        return fc.getInt("jukebox.music-distance", 64);
     }
 
     public double villagerSprintingSpeed(){
@@ -160,5 +187,9 @@ public class FileManager {
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static File getDiscoFolder() {
+        return discoFolder;
     }
 }

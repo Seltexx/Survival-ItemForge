@@ -566,10 +566,15 @@ public abstract class CustomVillager {
     }
 
     public void removeWorkingStation() {
-        getLevelDisplay().remove();
-        CustomBlockData blockData = new CustomBlockData(workingStation, ItemForge.getForge());
-        blockData.remove(BLOCK_BLOCKED_BY);
-        blockData.remove(BLOCK_TEXT_DISPLAY_UUID);
+        TextDisplay display = getLevelDisplay();
+        if (display != null) {
+            display.remove();
+        }
+        if (workingStation != null) {
+            CustomBlockData blockData = new CustomBlockData(workingStation, ItemForge.getForge());
+            blockData.remove(BLOCK_BLOCKED_BY);
+            blockData.remove(BLOCK_TEXT_DISPLAY_UUID);
+        }
         profession = null;
         locWork = null;
         workingStation = null;
@@ -600,8 +605,8 @@ public abstract class CustomVillager {
         return workbenchData;
     }
     public void updateWorkbench(){
-        if (levelDisplay == null)getLevelDisplay();
-        if (levelDisplay == null)return;
+        if (levelDisplay == null) getLevelDisplay();
+        if (levelDisplay == null) return;
         levelDisplay.text(Level.convertLevelToDisplayLine(level));
         levelDisplay.setViewRange(5);
     }

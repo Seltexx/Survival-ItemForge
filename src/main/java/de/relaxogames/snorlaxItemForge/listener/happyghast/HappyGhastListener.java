@@ -57,6 +57,7 @@ public class HappyGhastListener implements Listener {
                 e.setCancelled(true);
                 break;
             }
+            default: return;
         }
         inHand.setAmount(inHand.getAmount()-1);
         happyGhast.getEntity().getLocation().getWorld().playSound(

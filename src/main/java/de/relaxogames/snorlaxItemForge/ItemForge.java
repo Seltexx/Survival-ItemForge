@@ -4,14 +4,15 @@ import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import de.relaxogames.snorlaxItemForge.commands.TestCommand;
 import de.relaxogames.snorlaxItemForge.listener.*;
-import de.relaxogames.snorlaxItemForge.listener.enchantments.HeadshotEnchantmentListener;
 import de.relaxogames.snorlaxItemForge.listener.happyghast.HappyGhastListener;
 import de.relaxogames.snorlaxItemForge.listener.musicdiscs.JukeboxListener;
 import de.relaxogames.snorlaxItemForge.listener.musicdiscs.MusicListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.BeekeeperListener;
-import de.relaxogames.snorlaxItemForge.listener.villager.FirecrackerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
+import de.relaxogames.snorlaxItemForge.teams.TeamCommand;
+import de.relaxogames.snorlaxItemForge.teams.TeamListener;
+import de.relaxogames.snorlaxItemForge.teams.TeamManager;
 import de.relaxogames.snorlaxItemForge.util.villager.VillagerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -35,6 +36,7 @@ public final class ItemForge extends JavaPlugin {
         commandRegis();
         listenerRegis();
         FileManager.initialize(); // Load all files
+        TeamManager.loadTeams();
         lingo = new Lingo(getDataFolder());
         fileManager.loadMessages(lingo);
         Advancements.loadAll();
@@ -48,6 +50,7 @@ public final class ItemForge extends JavaPlugin {
 
     private void commandRegis(){
         getCommand("debug").setExecutor(new TestCommand());
+        getCommand("team").setExecutor(new TeamCommand());
     }
 
     private void listenerRegis(){
@@ -66,11 +69,9 @@ public final class ItemForge extends JavaPlugin {
 
         pm.registerEvents(new VillagerListener(), this);
         pm.registerEvents(new BeekeeperListener(), this);
-        pm.registerEvents(new FirecrackerListener(), this);
         pm.registerEvents(new WorkingStationBreak(), this);
         pm.registerEvents(new HappyGhastListener(), this);
-        pm.registerEvents(new HeadshotEnchantmentListener(), this);
-
+        pm.registerEvents(new TeamListener(), this);
     }
 
     public static ItemForge getForge() {

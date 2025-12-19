@@ -8,6 +8,9 @@ import de.relaxogames.snorlaxItemForge.listener.happyghast.HappyGhastListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.BeekeeperListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.VillagerListener;
 import de.relaxogames.snorlaxItemForge.listener.villager.WorkingStationBreak;
+import de.relaxogames.snorlaxItemForge.teams.TeamCommand;
+import de.relaxogames.snorlaxItemForge.teams.TeamListener;
+import de.relaxogames.snorlaxItemForge.teams.TeamManager;
 import de.relaxogames.snorlaxItemForge.util.villager.VillagerWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -33,6 +36,7 @@ public final class ItemForge extends JavaPlugin {
         commandRegis();
         listenerRegis();
         FileManager.initialize(); // Load all files
+        TeamManager.loadTeams();
         lingo = new Lingo(getDataFolder());
         fileManager.loadMessages(lingo);
         Advancements.loadAll();
@@ -46,6 +50,7 @@ public final class ItemForge extends JavaPlugin {
 
     private void commandRegis(){
         getCommand("debug").setExecutor(new TestCommand());
+        getCommand("team").setExecutor(new TeamCommand());
     }
 
     private void listenerRegis(){
@@ -62,6 +67,7 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new BeekeeperListener(), this);
         pm.registerEvents(new WorkingStationBreak(), this);
         pm.registerEvents(new HappyGhastListener(), this);
+        pm.registerEvents(new TeamListener(), this);
     }
 
     public static @NotNull Plugin getForge() {

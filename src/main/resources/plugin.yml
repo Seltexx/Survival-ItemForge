@@ -9,3 +9,5 @@ website: relaxogames.de/development
 commands:
   debug:
     description: Help
+  team:
+    description: Open the team GUI

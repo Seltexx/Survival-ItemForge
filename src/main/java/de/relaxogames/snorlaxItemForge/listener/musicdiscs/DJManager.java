@@ -36,6 +36,7 @@ public class DJManager {
         for (Player there : hearer){
             psp.addPlayer(there);
         }
+        psp.setAutoDestroy(true);
         psp.setPlaying(true);
     }
 

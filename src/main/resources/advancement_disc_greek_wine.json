@@ -1,29 +1,29 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:music_disc_chirp"
+      "id": "minecraft:music_disc_pigstep"
     },
     "title": {
-      "text": "Y.M.C.A."
+      "text": "Griechischer Wein!"
     },
     "description": {
-      "text": "Höre die Schallplatte Y.M.C.A. vollständig"
+      "text": "Höre die Schallplatte Griechischer Wein vollständig"
     },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": false,
     "hidden": true,
-    "x": 2,
+    "x": 5,
     "y": 3
   },
   "criteria": {
-    "listend_YMCA": {
+    "listend_greek_wine": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "listend_YMCA"
+      "listend_greek_wine"
     ]
   ],
   "parent": "snorlax-itemforge:advancement_songs"

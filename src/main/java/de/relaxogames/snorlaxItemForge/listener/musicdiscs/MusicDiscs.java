@@ -25,7 +25,7 @@ public enum MusicDiscs {
     RICK_ROLL(
             "RICKROLL",
             "RickRoll",
-            Material.MUSIC_DISC_11,
+            Material.MUSIC_DISC_LAVA_CHICKEN,
             1960,
             Advancement.LISTENED_TO_RICKROLL,
             "Music-Disc-RICKROLL-Lore"
@@ -52,7 +52,7 @@ public enum MusicDiscs {
     BEETHOVENS_NO5(
             "BH-5",
             "Beethovens5",
-            Material.MUSIC_DISC_LAVA_CHICKEN,
+            Material.MUSIC_DISC_11,
             1808,
             Advancement.LISTENED_TO_BEETHOVENS_NO5,
             "Music-Disc-BH-5-Lore"

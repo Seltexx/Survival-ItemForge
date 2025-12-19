@@ -1,7 +1,11 @@
 package de.relaxogames.snorlaxItemForge.listener.musicdiscs;
 
 import com.jeff_media.customblockdata.CustomBlockData;
+import com.xxmicloxx.NoteBlockAPI.event.SongEndEvent;
+import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
+import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import de.relaxogames.snorlaxItemForge.ItemForge;
+import de.relaxogames.snorlaxItemForge.advancement.Advancements;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -11,9 +15,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MusicListener implements Listener {
 
@@ -48,6 +54,21 @@ public class MusicListener implements Listener {
         MusicDiscs disc = MusicDiscs.fromCustomModelData(holdInHand.getItemMeta().getCustomModelData());
         if (disc == null)return;
         djManager.playSong(disc, e.getClickedBlock(), inRange);
+    }
+
+    @EventHandler
+    public void onEnd(SongEndEvent e){
+        SongPlayer sp = e.getSongPlayer();
+        if (!(sp instanceof PositionSongPlayer psp))return;
+        CustomBlockData cbdJBX = new CustomBlockData(psp.getTargetLocation().getBlock(), ItemForge.getForge());
+        if (cbdJBX== null)return;
+        for (UUID uuid : e.getSongPlayer().getPlayerUUIDs()){
+            Player p = Bukkit.getPlayer(uuid);
+            if (p == null)continue;
+            MusicDiscs disc = MusicDiscs.fromCustomModelData(cbdJBX.get(PLAYING_KEY, PersistentDataType.INTEGER));
+            if (disc == null)return;
+            Advancements.playout(p, disc.getAdvancement());
+        }
     }
 
 }

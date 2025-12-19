@@ -1,29 +1,29 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:music_disc_chirp"
+      "id": "minecraft:music_disc_relic"
     },
     "title": {
-      "text": "Y.M.C.A."
+      "text": "Gravity Falls - Theme"
     },
     "description": {
-      "text": "Höre die Schallplatte Y.M.C.A. vollständig"
+      "text": "Höre die Schallplatte Gravity Falls - Theme vollständig"
     },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": false,
     "hidden": true,
-    "x": 2,
+    "x": 6,
     "y": 3
   },
   "criteria": {
-    "listend_YMCA": {
+    "listend_gf_theme": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "listend_YMCA"
+      "listend_gf_theme"
     ]
   ],
   "parent": "snorlax-itemforge:advancement_songs"

@@ -1,29 +1,29 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:music_disc_chirp"
+      "id": "minecraft:music_disc_11"
     },
     "title": {
-      "text": "Y.M.C.A."
+      "text": "5. Sinfonie - Beethovens"
     },
     "description": {
-      "text": "Höre die Schallplatte Y.M.C.A. vollständig"
+      "text": "Höre die Schallplatte des Ludwig van Beethoven vollständig"
     },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": false,
     "hidden": true,
-    "x": 2,
+    "x": 7,
     "y": 3
   },
   "criteria": {
-    "listend_YMCA": {
+    "listend_bh_no5": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "listend_YMCA"
+      "listend_bh_no5"
     ]
   ],
   "parent": "snorlax-itemforge:advancement_songs"

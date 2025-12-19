@@ -9,12 +9,14 @@ public enum Advancement {
     PILOT_BEE("advancement_beekeeper_pilotbee", "happy_ghast_honey"),
     PEBBLED_SNOWBALL_DEATH("advancement_pebbled_snowball_death", "pebbled_snowball_death"),
 
+    SONGS_LITTLE_AMADEUS("advancement_song_little_amadeus", "criteria_needed"),
+    SONGS_ROOT("advancement_songs", "criteria_needed"),
     LISTENED_TO_YMCA("advancement_disc_ymca", "listend_YMCA"),
-    LISTENED_TO_RICKROLL("advancement_disc_rickroll", "listened_rickroll"),
-    LISTENED_TO_GREEK_WINE("advancement_disc_rickroll", "listened_rickroll"),
-    LISTENED_TO_GRAVITY_FALLS_THEME("advancement_disc_rickroll", "listened_rickroll"),
-    LISTENED_TO_BEETHOVENS_NO5("advancement_disc_rickroll", "listened_rickroll"),
-    LISTENED_TO_LET_IT_SNOW("advancement_disc_rickroll", "listened_rickroll");
+    LISTENED_TO_RICKROLL("advancement_disc_rickroll", "listend_rickroll"),
+    LISTENED_TO_GREEK_WINE("advancement_disc_greek_wine", "listend_greek_wine"),
+    LISTENED_TO_GRAVITY_FALLS_THEME("advancement_disc_gf_theme", "listend_gf_theme"),
+    LISTENED_TO_BEETHOVENS_NO5("advancement_disc_bh_no5", "listend_bh_no5"),
+    LISTENED_TO_LET_IT_SNOW("advancement_disc_let_it_snow", "listend_let_it_snow");
 
     String fileName;
     String trigger;

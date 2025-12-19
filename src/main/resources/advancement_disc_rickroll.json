@@ -1,29 +1,29 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:music_disc_chirp"
+      "id": "minecraft:music_disc_lava_chicken"
     },
     "title": {
-      "text": "Y.M.C.A."
+      "text": "Never gonna give you up!"
     },
     "description": {
-      "text": "Höre die Schallplatte Y.M.C.A. vollständig"
+      "text": "Höre den RickRoll vollständig"
     },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": false,
     "hidden": true,
-    "x": 2,
+    "x": 3,
     "y": 3
   },
   "criteria": {
-    "listend_YMCA": {
+    "listend_rickroll": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "listend_YMCA"
+      "listend_rickroll"
     ]
   ],
   "parent": "snorlax-itemforge:advancement_songs"

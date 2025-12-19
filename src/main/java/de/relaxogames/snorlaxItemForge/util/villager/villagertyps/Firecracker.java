@@ -6,6 +6,7 @@ import de.relaxogames.api.Lingo;
 import de.relaxogames.languages.Locale;
 import de.relaxogames.languages.ServerColors;
 import de.relaxogames.snorlaxItemForge.ItemForge;
+import de.relaxogames.snorlaxItemForge.listener.musicdiscs.MusicDiscs;
 import de.relaxogames.snorlaxItemForge.util.ItemBuilder;
 import de.relaxogames.snorlaxItemForge.util.villager.CustomVillager;
 import net.kyori.adventure.text.Component;
@@ -25,10 +26,7 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 public class Firecracker extends CustomVillager {
     private Merchant merchant;
@@ -235,83 +233,8 @@ public class Firecracker extends CustomVillager {
 
     public ItemStack rollRandomDisc(){
         Random random = new Random();
-
-        Material discMat = Material.MUSIC_DISC_5;
-        int discID = -1;
-        String discKey = "";
-        List<Component> lore = new ArrayList<>();
-
-
-        switch (random.nextInt(1, 6)){
-
-            //WENN HIER WAS ANGEPASST WIRD UNBEDINGT IM JUKEBOXLISTENER getByID auch ändern!
-            case 1:{
-                discMat = Material.MUSIC_DISC_CHIRP;
-                discID = 1978;
-                discKey = "YMCA";
-                lore.add(Component.text(
-                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-YMCA-Lore")
-                ));
-                break;
-            }
-            case 2:{
-                discMat = Material.MUSIC_DISC_11;
-                discID = 1808;
-                discKey = "BH-5";
-                lore.add(Component.text(
-                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-BH-5-Lore")
-                ));
-                break;
-            }
-            case 3:{
-                discMat = Material.MUSIC_DISC_RELIC;
-                discID = 2020;
-                discKey = "GF";
-                lore.add(Component.text(
-                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-GF-Lore")
-                ));
-                break;
-            }
-            case 4:{
-                discMat = Material.MUSIC_DISC_PIGSTEP;
-                discID = 1970;
-                discKey = "GRIECHISCH";
-                lore.add(Component.text(
-                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-GRIECHISCH-Lore")
-                ));
-                break;
-            }
-            case 5:{
-                discMat = Material.MUSIC_DISC_LAVA_CHICKEN;
-                discID = 1960;
-                discKey = "RICKROLL";
-                lore.add(Component.text(
-                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-RICKROLL-Lore")
-                ));
-                break;
-            }
-            case 6:{
-                discMat = Material.MUSIC_DISC_TEARS;
-                discID = 241225;
-                discKey = "CHRISTMAS-25";
-                lore.add(Component.text(
-                        Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-CHRISTMAS-25-Lore")
-                ));
-                break;
-            }
-        }
-
-        ItemStack musicDisco = new ItemStack(discMat, 1);
-        ItemMeta meta = musicDisco.getItemMeta();
-        meta.setCustomModelData(discID);
-        meta.lore(lore);
-        meta.customName(Component.text(
-                Lingo.getLibrary().getMessage(Locale.GERMAN, "Music-Disc-"+ discKey +"-Name")
-        ));
-        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        meta.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS);
-        musicDisco.setItemMeta(meta);
-        return musicDisco;
+        int discNo = random.nextInt(1, MusicDiscs.values().length);
+        return MusicDiscs.values()[discNo].createItem();
     }
 
     static class FirecrackerListener implements Listener {

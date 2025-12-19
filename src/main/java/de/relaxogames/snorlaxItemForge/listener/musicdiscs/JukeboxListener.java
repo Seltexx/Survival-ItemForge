@@ -1,6 +1,10 @@
 package de.relaxogames.snorlaxItemForge.listener.musicdiscs;
 
 import com.jeff_media.customblockdata.CustomBlockData;
+import com.xxmicloxx.NoteBlockAPI.event.SongDestroyingEvent;
+import com.xxmicloxx.NoteBlockAPI.event.SongStoppedEvent;
+import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
+import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
 import de.relaxogames.api.Lingo;
 import de.relaxogames.languages.Locale;
 import de.relaxogames.snorlaxItemForge.ItemForge;
@@ -17,13 +21,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class JukeboxListener implements Listener {
 
@@ -33,7 +31,8 @@ public class JukeboxListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent e){
-        if (!(e.getBlock() instanceof Jukebox jukebox))return;
+        if (!(e.getBlock().getType().equals(Material.JUKEBOX)))return;
+        Jukebox jukebox = (Jukebox) e.getBlock();
         CustomBlockData cbdJBX = new CustomBlockData(jukebox.getBlock(), ItemForge.getForge());
         if (cbdJBX == null)return;
         if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
@@ -46,7 +45,8 @@ public class JukeboxListener implements Listener {
 
     @EventHandler
     public void onExplode(BlockExplodeEvent e){
-        if (!(e.getExplodedBlockState() instanceof Jukebox jukebox))return;
+        if (!(e.getBlock().getType().equals(Material.JUKEBOX)))return;
+        Jukebox jukebox = (Jukebox) e.getBlock();
         CustomBlockData cbdJBX = new CustomBlockData(jukebox.getBlock(), ItemForge.getForge());
         if (cbdJBX == null)return;
         if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
@@ -60,7 +60,8 @@ public class JukeboxListener implements Listener {
     @EventHandler
     public void onClick(PlayerInteractEvent e){
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK))return;
-        if (!(e.getClickedBlock() instanceof Jukebox jukebox))return;
+        if (!(e.getClickedBlock().getType().equals(Material.JUKEBOX)))return;
+        Jukebox jukebox = (Jukebox) e.getClickedBlock();
         CustomBlockData cbdJBX = new CustomBlockData(jukebox.getBlock(), ItemForge.getForge());
         if (cbdJBX == null)return;
         if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
@@ -69,6 +70,24 @@ public class JukeboxListener implements Listener {
 
         djManager.stopSong(e.getPlayer(), jukebox.getLocation());
         jukebox.stopPlaying();
+    }
+
+    @EventHandler
+    public void onDestroy(SongDestroyingEvent e){
+        SongPlayer sp = e.getSongPlayer();
+        if (!(sp instanceof PositionSongPlayer psp))return;
+        CustomBlockData cbdJBX = new CustomBlockData(psp.getTargetLocation().getBlock(), ItemForge.getForge());
+        if (cbdJBX== null)return;
+        cbdJBX.remove(PLAYING_KEY);
+    }
+
+    @EventHandler
+    public void onSongStopped(SongStoppedEvent e){
+        SongPlayer sp = e.getSongPlayer();
+        if (!(sp instanceof PositionSongPlayer psp))return;
+        CustomBlockData cbdJBX = new CustomBlockData(psp.getTargetLocation().getBlock(), ItemForge.getForge());
+        if (cbdJBX== null)return;
+        cbdJBX.remove(PLAYING_KEY);
     }
 
     private void dropDisc(Location jkbx){

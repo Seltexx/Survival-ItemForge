@@ -1,29 +1,29 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:music_disc_chirp"
+      "id": "minecraft:music_disc_tears"
     },
     "title": {
-      "text": "Y.M.C.A."
+      "text": "Let it snow!"
     },
     "description": {
-      "text": "Höre die Schallplatte Y.M.C.A. vollständig"
+      "text": "Höre die Schallplatte Let it Snow vollständig"
     },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": false,
     "hidden": true,
-    "x": 2,
+    "x": 4,
     "y": 3
   },
   "criteria": {
-    "listend_YMCA": {
+    "listend_let_it_snow": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "listend_YMCA"
+      "listend_let_it_snow"
     ]
   ],
   "parent": "snorlax-itemforge:advancement_songs"

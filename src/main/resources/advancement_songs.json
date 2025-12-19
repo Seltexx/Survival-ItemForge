@@ -1,29 +1,29 @@
 {
   "display": {
     "icon": {
-      "id": "minecraft:beehive"
+      "id": "minecraft:jukebox"
     },
     "title": {
-      "text": "Rum gekommen in der Welt"
+      "text": "Musische Ader"
     },
     "description": {
-      "text": "Höre alle Schallplatten des Feuerwerkers"
+      "text": "Kaufe eine Schallplatte von einem Feuerwerker"
     },
-    "frame": "challange",
+    "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false,
     "x": 1,
-    "y": 2
+    "y": 5
   },
   "criteria": {
-    "listend_YMCA": {
+    "criteria_needed": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "listend_YMCA"
+      "criteria_needed"
     ]
   ],
   "parent": "snorlax-itemforge:advancement_snorlaxlabs"

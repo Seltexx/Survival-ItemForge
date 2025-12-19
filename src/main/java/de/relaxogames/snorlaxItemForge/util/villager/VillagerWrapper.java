@@ -23,6 +23,13 @@ public class VillagerWrapper {
     private static final NamespacedKey BLOCK_BLOCKED_BY = new NamespacedKey(ItemForge.getForge(), "villager_uuid");
 
     public static CustomVillager from(Villager villager) {
+        if (villager.getProfession() != Villager.Profession.NONE) {
+            // If it has a vanilla profession (including NITWIT), check if it's already one of our custom professions
+            if (!villager.getPersistentDataContainer().has(PROFESSION_KEY, PersistentDataType.STRING)) {
+                return null;
+            }
+        }
+
         String type = villager.getPersistentDataContainer()
                 .get(PROFESSION_KEY, PersistentDataType.STRING);
 
@@ -75,20 +82,16 @@ public class VillagerWrapper {
                             loc.getBlockZ() + z
                     );
 
-                    for (CustomVillager.Profession prof : CustomVillager.Profession.values()) {
+                    CustomVillager.Profession prof = CustomVillager.Profession.convertBlockType(block.getType());
+                    if (prof == null) continue;
 
-                        if (block.getType() != prof.getWorkTable()) continue;
+                    CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
+                    if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) continue;
 
-                        CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
-
-                        if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) continue;
-
-                        double distance = loc.distanceSquared(block.getLocation());
-
-                        if (distance < closestDistance) {
-                            closestDistance = distance;
-                            foundProfession = prof.getKey().getKey();
-                        }
+                    double distance = loc.distanceSquared(block.getLocation());
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        foundProfession = prof.getKey().getKey();
                     }
                 }
             }

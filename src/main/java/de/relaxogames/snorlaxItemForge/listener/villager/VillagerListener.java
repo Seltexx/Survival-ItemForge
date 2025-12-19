@@ -34,11 +34,11 @@ public class VillagerListener implements Listener {
 
         if (!(mover instanceof Villager villager))return;
         if (!villager.isAdult())return;
+        if (villager.getProfession() != Villager.Profession.NONE) return;
         if (!canSearchNow(villager))return;
         CustomVillager customVillager = VillagerWrapper.from(villager);
         if (customVillager == null)return;
         if (customVillager.getWorkstationLocation() != null)return;
-        if (customVillager.getProfession() != null && villager.getProfession().equals(Villager.Profession.NONE))return;
         customVillager.moveToNearestWorkingStation();
     }
 

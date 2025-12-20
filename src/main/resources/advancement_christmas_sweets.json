@@ -4,37 +4,37 @@
       "id": "minecraft:player_head",
       "components": {
         "minecraft:profile": {
-          "id": [0, 0, 0, 3],
+          "id": [0, 0, 0, 4],
           "properties": [
             {
               "name": "textures",
-              "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTE3ZWJhYWIwZTA0ODU4MjIwYTYyZWMxNDAzMmY5NDdmY2JhM2MzMWYzZGQ3YTY0MWVkYTZjMzcyY2U5NmNjNiJ9fX0="
+              "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2RiNTQ0MjlkZWM1YjNmN2VmNDBlOGJjM2ZmMTk5NWNlZjY5NmEzNTAyOGY3ODJmNjM5MWMyYjU1MTFiYmUifX19"
             }
           ]
         }
       }
     },
     "title": {
-      "text": "Gemütlicher Abend"
+      "text": "Naschkatze"
     },
     "description": {
-      "text": "Trinke eine Heiße Schokolade oder einen Glühwein"
+      "text": "Genieße weihnachtliches Gebäck oder Süßigkeiten"
     },
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false,
-    "x": 2,
+    "x": 3,
     "y": 2
   },
   "criteria": {
-    "drink_christmas": {
+    "eat_sweets": {
       "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
     [
-      "drink_christmas"
+      "eat_sweets"
     ]
   ],
   "parent": "snorlax-itemforge:advancement_snorlaxlabs"

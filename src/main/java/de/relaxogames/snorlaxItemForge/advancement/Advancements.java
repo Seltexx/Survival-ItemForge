@@ -44,9 +44,16 @@ public class Advancements {
             if (Bukkit.getAdvancement(key) != null) continue;
 
             JsonObject json = fileManager.readJSON(advancement);
-            JsonObject finalJson = JsonParser.parseString(json.toString()).getAsJsonObject();
+            if (json == null) {
+                Bukkit.getLogger().warning("Could not find advancement file for " + key);
+                continue;
+            }
 
-            Bukkit.getUnsafe().loadAdvancement(key, finalJson.toString());
+            try {
+                Bukkit.getUnsafe().loadAdvancement(key, json.toString());
+            } catch (Exception e) {
+                Bukkit.getLogger().severe("Failed to load advancement " + key + ": " + e.getMessage());
+            }
         }
     }
 

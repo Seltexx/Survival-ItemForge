@@ -2,6 +2,8 @@ package de.relaxogames.snorlaxItemForge.advancement;
 
 public enum Advancement {
     SNORLAX_ROOT("advancement_snorlaxlabs", "tick"),
+    SONGS_ROOT("advancement_songs", "criteria_needed"),
+
     BREWED_TINCTURE("advancement_thats_not_what_its_look_like", "brewed_tincture"),
     GLOBAL_ALCHEMIST_EXPLODED("advancement_tincture_explosion", "tincture_explosion"),
     PEBBLED_SNOWBALL("advancement_pebbled_snowball_hit", "pebbled_snowball_hit"),
@@ -10,7 +12,6 @@ public enum Advancement {
     PEBBLED_SNOWBALL_DEATH("advancement_pebbled_snowball_death", "pebbled_snowball_death"),
 
     SONGS_LITTLE_AMADEUS("advancement_song_little_amadeus", "criteria_needed"),
-    SONGS_ROOT("advancement_songs", "criteria_needed"),
     LISTENED_TO_YMCA("advancement_disc_ymca", "listend_YMCA"),
     LISTENED_TO_RICKROLL("advancement_disc_rickroll", "listend_rickroll"),
     LISTENED_TO_GREEK_WINE("advancement_disc_greek_wine", "listend_greek_wine"),
@@ -19,7 +20,8 @@ public enum Advancement {
     LISTENED_TO_LET_IT_SNOW("advancement_disc_let_it_snow", "listend_let_it_snow"),
 
     CHRISTMAS_COOK("advancement_christmas_cook", "bake_apple"),
-    CHRISTMAS_DRINKS("advancement_christmas_drinks", "drink_christmas");
+    CHRISTMAS_DRINKS("advancement_christmas_drinks", "drink_christmas"),
+    CHRISTMAS_SWEETS("advancement_christmas_sweets", "eat_sweets");
 
     String fileName;
     String trigger;

@@ -4,6 +4,7 @@
       "id": "minecraft:player_head",
       "components": {
         "minecraft:profile": {
+          "id": [0, 0, 0, 2],
           "properties": [
             {
               "name": "textures",

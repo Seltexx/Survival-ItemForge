@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:honey_bottle",
+      "components": {
+        "minecraft:custom_model_data": {
+          "value": 103
+        }
+      }
+    },
+    "title": {
+      "text": "Gemütlicher Abend"
+    },
+    "description": {
+      "text": "Trinke eine Heiße Schokolade oder einen Glühwein"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "x": 2,
+    "y": 2
+  },
+  "criteria": {
+    "drink_christmas": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "drink_christmas"
+    ]
+  ],
+  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
+}

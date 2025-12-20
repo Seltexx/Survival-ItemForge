@@ -39,6 +39,7 @@ public final class ItemForge extends JavaPlugin {
         TeamManager.loadTeams();
         lingo = new Lingo(getDataFolder());
         fileManager.loadMessages(lingo);
+        ChristmasItems.registerRecipes();
         Advancements.loadAll();
         VillagerWrapper.startWorkClock();
     }
@@ -72,6 +73,7 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new WorkingStationBreak(), this);
         pm.registerEvents(new HappyGhastListener(), this);
         pm.registerEvents(new TeamListener(), this);
+        pm.registerEvents(new ChristmasListener(), this);
     }
 
     public static ItemForge getForge() {

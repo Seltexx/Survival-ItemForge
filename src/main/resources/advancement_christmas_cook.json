@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:apple",
+      "components": {
+        "minecraft:custom_model_data": {
+          "value": 102
+        }
+      }
+    },
+    "title": {
+      "text": "Bratapfel-Genießer"
+    },
+    "description": {
+      "text": "Verzehre einen frisch gebackenen Bratapfel"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "x": 1,
+    "y": 2
+  },
+  "criteria": {
+    "bake_apple": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "bake_apple"
+    ]
+  ],
+  "parent": "snorlax-itemforge:advancement_snorlaxlabs"
+}

@@ -43,9 +43,22 @@ public class DJManager {
     public void stopSong(Player player, Location location){
         for (SongPlayer all : NoteBlockAPI.getSongPlayersByPlayer(player)){
             if (!(all instanceof PositionSongPlayer psp))continue;
-            if (psp.getTargetLocation().distance(location) > 0.5)return;
+            if (psp.getTargetLocation().distance(location) > 0.5)continue;
             psp.setPlaying(false);
             psp.destroy();
+        }
+    }
+
+    public void stopAndEject(Block jkbx, Player player) {
+        CustomBlockData cbdJBX = new CustomBlockData(jkbx, ItemForge.getForge());
+        Integer fromPDC = cbdJBX.get(PLAYING_KEY, PersistentDataType.INTEGER);
+        if (fromPDC != null) {
+            jkbx.getWorld().dropItemNaturally(jkbx.getLocation().add(0.5, 0.5, 0.5), MusicDiscs.convertModelIdToItemStack(fromPDC));
+            cbdJBX.remove(PLAYING_KEY);
+        }
+        stopSong(player, jkbx.getLocation());
+        if (jkbx.getState() instanceof org.bukkit.block.Jukebox jukebox) {
+            jukebox.stopPlaying();
         }
     }
 

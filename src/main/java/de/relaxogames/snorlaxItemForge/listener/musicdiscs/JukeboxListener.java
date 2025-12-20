@@ -32,44 +32,25 @@ public class JukeboxListener implements Listener {
     @EventHandler
     public void onBreak(BlockBreakEvent e){
         if (!(e.getBlock().getType().equals(Material.JUKEBOX)))return;
-        Jukebox jukebox = (Jukebox) e.getBlock();
-        CustomBlockData cbdJBX = new CustomBlockData(jukebox.getBlock(), ItemForge.getForge());
-        if (cbdJBX == null)return;
-        if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
-
-        dropDisc(jukebox.getLocation());
-
-        djManager.stopSong(e.getPlayer(), jukebox.getLocation());
-        jukebox.stopPlaying();
+        djManager.stopAndEject(e.getBlock(), e.getPlayer());
     }
 
     @EventHandler
     public void onExplode(BlockExplodeEvent e){
         if (!(e.getBlock().getType().equals(Material.JUKEBOX)))return;
-        Jukebox jukebox = (Jukebox) e.getBlock();
-        CustomBlockData cbdJBX = new CustomBlockData(jukebox.getBlock(), ItemForge.getForge());
-        if (cbdJBX == null)return;
-        if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
-
-        dropDisc(jukebox.getLocation());
-
-        djManager.stopSong(getNearestPlayer(jukebox.getLocation()), jukebox.getLocation());
-        jukebox.stopPlaying();
+        djManager.stopAndEject(e.getBlock(), getNearestPlayer(e.getBlock().getLocation()));
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onClick(PlayerInteractEvent e){
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK))return;
-        if (!(e.getClickedBlock().getType().equals(Material.JUKEBOX)))return;
-        Jukebox jukebox = (Jukebox) e.getClickedBlock();
-        CustomBlockData cbdJBX = new CustomBlockData(jukebox.getBlock(), ItemForge.getForge());
-        if (cbdJBX == null)return;
+        if (e.getClickedBlock() == null || !(e.getClickedBlock().getType().equals(Material.JUKEBOX)))return;
+        
+        CustomBlockData cbdJBX = new CustomBlockData(e.getClickedBlock(), ItemForge.getForge());
         if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
 
-        dropDisc(jukebox.getLocation());
-
-        djManager.stopSong(e.getPlayer(), jukebox.getLocation());
-        jukebox.stopPlaying();
+        djManager.stopAndEject(e.getClickedBlock(), e.getPlayer());
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -90,19 +71,11 @@ public class JukeboxListener implements Listener {
         cbdJBX.remove(PLAYING_KEY);
     }
 
-    private void dropDisc(Location jkbx){
-        CustomBlockData cbdJBX = new CustomBlockData(jkbx.getBlock(), ItemForge.getForge());
-        Location itemDrop = jkbx.add(0, 0.5, 0);
-        Integer fromPDC = cbdJBX.get(PLAYING_KEY, PersistentDataType.INTEGER);
-        if (fromPDC == null)return;
-        itemDrop.getWorld().dropItem(itemDrop, MusicDiscs.convertModelIdToItemStack(fromPDC));
-        cbdJBX.remove(PLAYING_KEY);
-    }
-
     private Player getNearestPlayer(Location location) {
         Player nearest = null;
         double nearestDistance = Double.MAX_VALUE;
 
+        if (location.getWorld() == null) return null;
         for (Player player : location.getWorld().getPlayers()) {
             double distance = player.getLocation().distanceSquared(location);
             if (distance < nearestDistance) {

@@ -2,8 +2,8 @@ package de.relaxogames.snorlaxItemForge;
 
 import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
-import de.relaxogames.snorlaxItemForge.commands.TestCommand;
 import de.relaxogames.snorlaxItemForge.listener.*;
+import de.relaxogames.snorlaxItemForge.listener.enchantments.HeadshotEnchantmentListener;
 import de.relaxogames.snorlaxItemForge.listener.happyghast.HappyGhastListener;
 import de.relaxogames.snorlaxItemForge.listener.musicdiscs.JukeboxListener;
 import de.relaxogames.snorlaxItemForge.listener.musicdiscs.MusicListener;
@@ -49,7 +49,6 @@ public final class ItemForge extends JavaPlugin {
     }
 
     private void commandRegis(){
-        getCommand("debug").setExecutor(new TestCommand());
         getCommand("team").setExecutor(new TeamCommand());
     }
 
@@ -67,6 +66,7 @@ public final class ItemForge extends JavaPlugin {
         pm.registerEvents(new MusicListener(), this);
         pm.registerEvents(new JukeboxListener(), this);
 
+        pm.registerEvents(new HeadshotEnchantmentListener(), this);
         pm.registerEvents(new VillagerListener(), this);
         pm.registerEvents(new BeekeeperListener(), this);
         pm.registerEvents(new WorkingStationBreak(), this);

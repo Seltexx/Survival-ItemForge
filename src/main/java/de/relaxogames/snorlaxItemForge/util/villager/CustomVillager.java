@@ -566,7 +566,7 @@ public abstract class CustomVillager {
     }
 
     public void removeWorkingStation() {
-        getLevelDisplay().remove();
+        if (getLevelDisplay() != null)getLevelDisplay().remove();
         CustomBlockData blockData = new CustomBlockData(workingStation, ItemForge.getForge());
         blockData.remove(BLOCK_BLOCKED_BY);
         blockData.remove(BLOCK_TEXT_DISPLAY_UUID);

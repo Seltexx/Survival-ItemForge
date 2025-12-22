@@ -31,7 +31,6 @@ import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;

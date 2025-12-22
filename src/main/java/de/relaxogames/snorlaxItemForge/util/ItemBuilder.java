@@ -2,7 +2,12 @@ package de.relaxogames.snorlaxItemForge.util;
 
 import de.relaxogames.api.Lingo;
 import de.relaxogames.languages.Locale;
-import de.relaxogames.snorlaxItemForge.ItemForge;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.Consumable;
+import io.papermc.paper.datacomponent.item.FoodProperties;
+import io.papermc.paper.datacomponent.item.consumable.ConsumeEffect;
+import io.papermc.paper.datacomponent.item.consumable.ItemUseAnimation;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -86,14 +91,66 @@ public class ItemBuilder {
         is.setItemMeta(skullMeta);
     }
 
+    public void makeEdible(int nutrition, float saturation,
+                           float consumeSeconds, ItemUseAnimation animation,
+                           Key sound, boolean hasParticles, boolean canAlwaysEat,
+                           List<ConsumeEffect> effects) {
+
+        // Set food properties
+        FoodProperties food = FoodProperties.food()
+                .nutrition(nutrition)
+                .saturation(saturation)
+                .canAlwaysEat(canAlwaysEat)
+                .build();
+        is.setData(DataComponentTypes.FOOD, food);
+
+        // Set consumable properties
+        Consumable.Builder consumableBuilder = Consumable.consumable()
+                .consumeSeconds(consumeSeconds)
+                .animation(animation)
+                .hasConsumeParticles(hasParticles);
+
+        if (sound != null) {
+            consumableBuilder.sound(sound);
+        }
+
+        if (effects != null && !effects.isEmpty()) {
+            consumableBuilder.addEffects(effects);
+        }
+
+        is.setData(DataComponentTypes.CONSUMABLE, consumableBuilder.build());
+    }
     public void makeEdible(int nutrition, float saturation) {
-        ItemMeta meta = is.getItemMeta();
-        FoodComponent food = meta.getFood();
-        food.setNutrition(nutrition);
-        food.setSaturation(saturation);
-        food.setCanAlwaysEat(true);
-        meta.setFood(food);
-        is.setItemMeta(meta);
+        makeEdible(nutrition, saturation, 1.6f, ItemUseAnimation.EAT,
+                Key.key("entity.generic.eat"), true, false, null);
+    }
+
+    public void makeEdible(int nutrition, float saturation, boolean canAlwaysEat) {
+        makeEdible(nutrition, saturation, 1.6f, ItemUseAnimation.EAT,
+                Key.key("entity.generic.eat"), true, canAlwaysEat, null);
+    }
+
+    public void makeEdible(int nutrition, float saturation,
+                           float consumeSeconds, ItemUseAnimation animation) {
+        makeEdible(nutrition, saturation, consumeSeconds, animation,
+                Key.key("entity.generic.eat"), true, false, null);
+    }
+
+    public void makeEdible(int nutrition, float saturation,
+                           List<ConsumeEffect> effects) {
+        makeEdible(nutrition, saturation, 1.6f, ItemUseAnimation.EAT,
+                Key.key("entity.generic.eat"), true, false, effects);
+    }
+
+    public void makeDrinkable(int nutrition, float saturation) {
+        makeEdible(nutrition, saturation, 1.6f, ItemUseAnimation.DRINK,
+                Key.key("entity.generic.drink"), true, false, null);
+    }
+
+    public void makeDrinkable(int nutrition, float saturation,
+                              List<ConsumeEffect> effects) {
+        makeEdible(nutrition, saturation, 1.6f, ItemUseAnimation.DRINK,
+                Key.key("entity.generic.drink"), true, false, effects);
     }
 
     public ItemStack getItem() {

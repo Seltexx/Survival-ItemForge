@@ -30,7 +30,7 @@ public class ChristmasItems {
                 CHRISTMAS_ITEM_KEY, 101
         );
         builder.addCustomModelData(101);
-        builder.makeEdible(1, 0.1f);
+        builder.makeEdible(1, 0.1f, false);
         ItemStack item = builder.getItem();
         item.setAmount(1);
         return item;
@@ -44,7 +44,7 @@ public class ChristmasItems {
                 CHRISTMAS_ITEM_KEY, 102
         );
         builder.addCustomModelData(102);
-        builder.makeEdible(4, 0.3f);
+        builder.makeEdible(5, 0.3f, true);
         ItemStack item = builder.getItem();
         item.setAmount(1);
         return item;
@@ -59,7 +59,7 @@ public class ChristmasItems {
         );
         builder.addCustomModelData(103);
         builder.setHeadTexture(HOT_CHOCOLATE_TEXTURE);
-        builder.makeEdible(2, 0.2f);
+        builder.makeEdible(2, 0.2f, true);
         return builder.getItem();
     }
 
@@ -72,7 +72,7 @@ public class ChristmasItems {
         );
         builder.addCustomModelData(104);
         builder.setHeadTexture(MULLED_WINE_TEXTURE);
-        builder.makeEdible(2, 0.2f);
+        builder.makeEdible(2, 0.2f, true);
         return builder.getItem();
     }
 
@@ -85,7 +85,7 @@ public class ChristmasItems {
         );
         builder.addCustomModelData(105);
         builder.setHeadTexture(GINGERBREAD_MAN_TEXTURE);
-        builder.makeEdible(2, 0.4f);
+        builder.makeEdible(6, 0.4f, false);
         return builder.getItem();
     }
 
@@ -98,7 +98,7 @@ public class ChristmasItems {
         );
         builder.addCustomModelData(106);
         builder.setHeadTexture(CANDY_CANE_TEXTURE);
-        builder.makeEdible(2, 0.1f);
+        builder.makeEdible(1, 0.1f, true);
         return builder.getItem();
     }
 
@@ -111,7 +111,7 @@ public class ChristmasItems {
         );
         builder.addCustomModelData(107);
         builder.setHeadTexture(BAKED_PUDDING_TEXTURE);
-        builder.makeEdible(8, 0.3f);
+        builder.makeEdible(6, 0.3f, false);
         return builder.getItem();
     }
 
@@ -123,7 +123,7 @@ public class ChristmasItems {
                 CHRISTMAS_ITEM_KEY, 108
         );
         builder.addCustomModelData(108);
-        builder.makeEdible(4, 0.4f);
+        builder.makeEdible(3, 0.4f, true);
         return builder.getItem();
     }
 
@@ -136,7 +136,7 @@ public class ChristmasItems {
         );
         builder.addCustomModelData(109);
         builder.setHeadTexture(UNBAKED_GINGERBREAD_TEXTURE);
-        builder.makeEdible(1, 0.1f);
+        builder.makeEdible(1, 0.1f, false);
         return builder.getItem();
     }
 
@@ -148,7 +148,7 @@ public class ChristmasItems {
                 CHRISTMAS_ITEM_KEY, 110
         );
         builder.addCustomModelData(110);
-        builder.makeEdible(1, 0.1f);
+        builder.makeEdible(1, 0.1f, false);
         return builder.getItem();
     }
 
@@ -161,7 +161,7 @@ public class ChristmasItems {
         );
         builder.addCustomModelData(113);
         builder.setHeadTexture(UNBAKED_PUDDING_TEXTURE);
-        builder.makeEdible(2, 0.1f);
+        builder.makeEdible(1, 0.1f, false);
         return builder.getItem();
     }
 

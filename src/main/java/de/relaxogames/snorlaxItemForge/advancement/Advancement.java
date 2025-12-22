@@ -18,7 +18,11 @@ public enum Advancement {
     LISTENED_TO_GRAVITY_FALLS_THEME("", "listend_gf_theme"),
     LISTENED_TO_BEETHOVENS_NO5("", "listend_bh_no5"),
     LISTENED_TO_LET_IT_SNOW("", "listend_let_it_snow"),
-    SONGS_LITTLE_AMADEUS("advancement_song_little_amadeus", "criteria_needed");
+    SONGS_LITTLE_AMADEUS("advancement_song_little_amadeus", "criteria_needed"),
+
+    CHRISTMAS_COOK("advancement_christmas_cook", "bake_apple"),
+    CHRISTMAS_DRINKS("advancement_christmas_drinks", "drink_christmas"),
+    CHRISTMAS_SWEETS("advancement_christmas_sweets", "eat_sweets");
 
     String fileName;
     String trigger;

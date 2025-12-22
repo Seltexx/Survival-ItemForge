@@ -59,9 +59,6 @@ public class HappyGhastListener implements Listener {
                 feedGhast(happyGhast, interacter, inHand);
                 break;
             }
-            default: {
-                break;
-            }
             default: return;
         }
     }

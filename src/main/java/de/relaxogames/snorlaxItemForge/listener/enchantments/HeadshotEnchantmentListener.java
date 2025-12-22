@@ -45,27 +45,33 @@ public class HeadshotEnchantmentListener implements Listener {
     public void onEnchant(PrepareAnvilEvent e){
         Inventory anvilInv = e.getInventory();
         if (anvilInv == null || e.getView() == null)return;
+        System.out.println("1");
         ItemStack crossbow = e.getInventory().getFirstItem();
         if (crossbow == null)return;
         if (!crossbow.getType().equals(Material.CROSSBOW))return;
-
+        System.out.println("2");
         ItemStack book = e.getInventory().getSecondItem();
         if (book == null)return;
+        System.out.println("3");
         if (!book.getType().equals(Material.ENCHANTED_BOOK))return;
+        System.out.println("4");
         if (!book.hasItemMeta() || !book.getItemMeta().hasCustomModelData())return;
+        System.out.println("5");
         if (book.getItemMeta().getCustomModelData() != 80)return;
-
+        System.out.println("6");
         LingoUser enchanter = new LingoPlayer(e.getView().getPlayer().getUniqueId());
 
         ItemStack result = crossbow.clone();
         ItemMeta resultMeta = result.getItemMeta();
         if (result.getEnchantments().isEmpty())resultMeta.setEnchantmentGlintOverride(true);
+        System.out.println("7");
         resultMeta.lore(updateLore(result, enchanter.getLanguage(), Enchantment.SWIFT_SNEAK));
         resultMeta.setCustomModelData(81);
         result.addUnsafeEnchantment(Enchantment.SWIFT_SNEAK, 1);
         result.addItemFlags(ItemFlag.HIDE_STORED_ENCHANTS, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
         resultMeta.setRarity(ItemRarity.RARE);
         if (!e.getView().getRenameText().isEmpty())resultMeta.displayName(Component.text(e.getView().getRenameText()));
+        System.out.println("8");
         result.setItemMeta(resultMeta);
 
         e.getView().setMaximumRepairCost(45);

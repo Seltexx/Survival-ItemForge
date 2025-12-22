@@ -2,7 +2,6 @@ package de.relaxogames.snorlaxItemForge;
 
 import de.relaxogames.api.Lingo;
 import de.relaxogames.snorlaxItemForge.advancement.Advancements;
-import de.relaxogames.snorlaxItemForge.commands.TestCommand;
 import de.relaxogames.snorlaxItemForge.listener.*;
 import de.relaxogames.snorlaxItemForge.listener.happyghast.HappyGhastListener;
 import de.relaxogames.snorlaxItemForge.listener.musicdiscs.JukeboxListener;
@@ -50,7 +49,6 @@ public final class ItemForge extends JavaPlugin {
     }
 
     private void commandRegis(){
-        getCommand("debug").setExecutor(new TestCommand());
         getCommand("team").setExecutor(new TeamCommand());
     }
 

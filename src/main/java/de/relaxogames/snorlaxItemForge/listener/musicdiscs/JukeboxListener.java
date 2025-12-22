@@ -5,14 +5,17 @@ import com.xxmicloxx.NoteBlockAPI.event.SongDestroyingEvent;
 import com.xxmicloxx.NoteBlockAPI.event.SongStoppedEvent;
 import com.xxmicloxx.NoteBlockAPI.songplayer.PositionSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.songplayer.SongPlayer;
+import de.relaxogames.api.Lingo;
+import de.relaxogames.languages.Locale;
 import de.relaxogames.snorlaxItemForge.ItemForge;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.block.Block;
+import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -25,50 +28,29 @@ public class JukeboxListener implements Listener {
     private DJManager djManager = new DJManager();
 
     private final NamespacedKey PLAYING_KEY = new NamespacedKey(ItemForge.getForge(), "currently_playing");
-    private final NamespacedKey IS_ACTIVE = new NamespacedKey(ItemForge.getForge(), "disc_is_playing");
 
     @EventHandler
     public void onBreak(BlockBreakEvent e){
         if (!(e.getBlock().getType().equals(Material.JUKEBOX)))return;
-        Block jukebox = e.getBlock();
-        CustomBlockData cbdJBX = new CustomBlockData(jukebox, ItemForge.getForge());
-        if (cbdJBX == null)return;
-        if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
-
-        dropDisc(jukebox.getLocation());
-
-        djManager.stopSong(e.getPlayer(), jukebox.getLocation());
+        djManager.stopAndEject(e.getBlock(), e.getPlayer());
     }
 
     @EventHandler
     public void onExplode(BlockExplodeEvent e){
-        if (!(e.getExplodedBlockState().getType().equals(Material.JUKEBOX)))return;
-        Block jukebox = e.getExplodedBlockState().getBlock();
-        CustomBlockData cbdJBX = new CustomBlockData(jukebox, ItemForge.getForge());
-        if (cbdJBX == null)return;
-        if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
-
-        dropDisc(jukebox.getLocation());
-
-        djManager.stopSong(getNearestPlayer(jukebox.getLocation()), jukebox.getLocation());
+        if (!(e.getBlock().getType().equals(Material.JUKEBOX)))return;
+        djManager.stopAndEject(e.getBlock(), getNearestPlayer(e.getBlock().getLocation()));
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true)
     public void onClick(PlayerInteractEvent e){
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK))return;
-        if (!(e.getClickedBlock().getType().equals(Material.JUKEBOX)))return;
-        if (e.getItem() != null && e.getItem().hasItemMeta() &&
-                e.getItem().getItemMeta().hasCustomModelData() &&
-                e.getItem().getType().isRecord())if (MusicDiscs.convertModelIdToItemStack(e.getItem().getItemMeta().getCustomModelData()) != null)return;
-        Block jukebox = e.getClickedBlock();
-        CustomBlockData cbdJBX = new CustomBlockData(jukebox, ItemForge.getForge());
-        if (cbdJBX == null)return;
-        if (!cbdJBX.has(IS_ACTIVE, PersistentDataType.BOOLEAN))return;
+        if (e.getClickedBlock() == null || !(e.getClickedBlock().getType().equals(Material.JUKEBOX)))return;
+        
+        CustomBlockData cbdJBX = new CustomBlockData(e.getClickedBlock(), ItemForge.getForge());
         if (!cbdJBX.has(PLAYING_KEY, PersistentDataType.INTEGER))return;
 
-        dropDisc(jukebox.getLocation());
-
-        djManager.stopSong(e.getPlayer(), jukebox.getLocation());
+        djManager.stopAndEject(e.getClickedBlock(), e.getPlayer());
+        e.setCancelled(true);
     }
 
     @EventHandler
@@ -77,7 +59,7 @@ public class JukeboxListener implements Listener {
         if (!(sp instanceof PositionSongPlayer psp))return;
         CustomBlockData cbdJBX = new CustomBlockData(psp.getTargetLocation().getBlock(), ItemForge.getForge());
         if (cbdJBX== null)return;
-        cbdJBX.set(IS_ACTIVE, PersistentDataType.BOOLEAN, false);
+        cbdJBX.remove(PLAYING_KEY);
     }
 
     @EventHandler
@@ -86,15 +68,6 @@ public class JukeboxListener implements Listener {
         if (!(sp instanceof PositionSongPlayer psp))return;
         CustomBlockData cbdJBX = new CustomBlockData(psp.getTargetLocation().getBlock(), ItemForge.getForge());
         if (cbdJBX== null)return;
-        cbdJBX.set(IS_ACTIVE, PersistentDataType.BOOLEAN, false);
-    }
-
-    private void dropDisc(Location jkbx){
-        CustomBlockData cbdJBX = new CustomBlockData(jkbx.getBlock(), ItemForge.getForge());
-        Location itemDrop = jkbx.add(0, 0.5, 0);
-        Integer fromPDC = cbdJBX.get(PLAYING_KEY, PersistentDataType.INTEGER);
-        if (fromPDC == null)return;
-        itemDrop.getWorld().dropItem(itemDrop, MusicDiscs.convertModelIdToItemStack(fromPDC));
         cbdJBX.remove(PLAYING_KEY);
     }
 
@@ -102,6 +75,7 @@ public class JukeboxListener implements Listener {
         Player nearest = null;
         double nearestDistance = Double.MAX_VALUE;
 
+        if (location.getWorld() == null) return null;
         for (Player player : location.getWorld().getPlayers()) {
             double distance = player.getLocation().distanceSquared(location);
             if (distance < nearestDistance) {

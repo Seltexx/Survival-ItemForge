@@ -62,6 +62,7 @@ public class HappyGhastListener implements Listener {
             default: {
                 break;
             }
+            default: return;
         }
     }
 

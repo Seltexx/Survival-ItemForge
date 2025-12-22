@@ -197,6 +197,7 @@ public abstract class CustomVillager {
     public boolean moveToNearestWorkingStation() {
         if (!villager.isAdult()) return false;
         if (locWork != null) return false;
+        if (villager.getProfession() != Villager.Profession.NONE && profession == null) return false;
 
         Location nearest = findNearestBlock(
                 villager.getLocation(),
@@ -525,9 +526,9 @@ public abstract class CustomVillager {
     }
     public Block nearestWorkingStation(){
         Location possible = findNearestBlock(villager.getLocation(), fM.villagerWorkingTableSearch());
+        if (possible == null) return null;
         CustomBlockData possibleBlockData = new CustomBlockData(possible.getBlock(), ItemForge.getForge());
-        if(possibleBlockData == null)return null;
-        if (possibleBlockData.has(BLOCK_BLOCKED_BY))return null;
+        if (possibleBlockData.has(BLOCK_BLOCKED_BY)) return null;
         return possible.getBlock();
     }
     public void assignNewWorkingStation(Block station, boolean walkTo){
@@ -566,10 +567,15 @@ public abstract class CustomVillager {
     }
 
     public void removeWorkingStation() {
-        if (getLevelDisplay() != null)getLevelDisplay().remove();
-        CustomBlockData blockData = new CustomBlockData(workingStation, ItemForge.getForge());
-        blockData.remove(BLOCK_BLOCKED_BY);
-        blockData.remove(BLOCK_TEXT_DISPLAY_UUID);
+        TextDisplay display = getLevelDisplay();
+        if (display != null) {
+            display.remove();
+        }
+        if (workingStation != null) {
+            CustomBlockData blockData = new CustomBlockData(workingStation, ItemForge.getForge());
+            blockData.remove(BLOCK_BLOCKED_BY);
+            blockData.remove(BLOCK_TEXT_DISPLAY_UUID);
+        }
         profession = null;
         locWork = null;
         workingStation = null;
@@ -600,8 +606,8 @@ public abstract class CustomVillager {
         return workbenchData;
     }
     public void updateWorkbench(){
-        if (levelDisplay == null)getLevelDisplay();
-        if (levelDisplay == null)return;
+        if (levelDisplay == null) getLevelDisplay();
+        if (levelDisplay == null) return;
         levelDisplay.text(Level.convertLevelToDisplayLine(level));
         levelDisplay.setViewRange(5);
     }

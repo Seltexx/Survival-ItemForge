@@ -7,7 +7,5 @@ description: Developed by the RelaxoGames.de Development Team.
 website: relaxogames.de/development
 depend: [NoteBlockAPI]
 commands:
-  debug:
-    description: Help
   team:
     description: Open the team GUI

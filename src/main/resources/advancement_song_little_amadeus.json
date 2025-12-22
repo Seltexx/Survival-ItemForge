@@ -4,45 +4,68 @@
       "id": "minecraft:player_head",
       "components": {
         "minecraft:profile": {
+          "id": [0, 0, 0, 1],
           "properties": [
             {
               "name": "textures",
-              "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2UxMDEwNzAyMTMxMTI0NmU0YzI3MTkzZWJlYWVjM2NkMDY0YmRiODZkNjJkMjlhZjA3YjdmYTQ5NjgyYzcifX19"
+              "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODc2ZWFiNzhiODBkNjBjNTE2N2EwNmY1ZjMwODVmNjFhZTllNjIyNDU1MjVhNjdmM2JhNDA1YjNhYWUwYWIzNSJ9fX0="
             }
           ]
         }
       }
     },
-    "title": { "text": "Little Amadeus" },
-    "description": { "text": "Höre alle Schallplatten des Feuerwerkers" },
+    "title": {
+      "text": "Little Amadeus"
+    },
+    "description": {
+      "text": "Höre alle Schallplatten des Feuerwerkers"
+    },
     "frame": "challenge",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false,
-    "x": 2,
-    "y": 3
+    "x": 4,
+    "y": 4
   },
   "criteria": {
-    "listend_YMCA": { "trigger": "minecraft:impossible" },
-    "listend_rickroll": { "trigger": "minecraft:impossible" },
-    "listend_greek_wine": { "trigger": "minecraft:impossible" },
-    "listend_let_it_snow": { "trigger": "minecraft:impossible" },
-    "listend_gf_theme": { "trigger": "minecraft:impossible" },
-    "listend_bh_no5": { "trigger": "minecraft:impossible" }
+    "listend_YMCA": {
+      "trigger": "minecraft:impossible"
+    },
+    "listend_rickroll": {
+      "trigger": "minecraft:impossible"
+    },
+    "listend_greek_wine": {
+      "trigger": "minecraft:impossible"
+    },
+    "listend_let_it_snow": {
+      "trigger": "minecraft:impossible"
+    },
+    "listend_gf_theme": {
+      "trigger": "minecraft:impossible"
+    },
+    "listend_bh_no5": {
+      "trigger": "minecraft:impossible"
+    }
   },
   "requirements": [
-    ["listend_YMCA"],
-    ["listend_rickroll"],
-    ["listend_greek_wine"],
-    ["listend_let_it_snow"],
-    ["listend_gf_theme"],
-    ["listend_bh_no5"]
-  ],
-  "rewards": {
-    "experience": 500,
-    "loot": [
-      "minecraft:air"
+    [
+      "listend_bh_no5"
+    ],
+    [
+      "listend_gf_theme"
+    ],
+    [
+      "listend_greek_wine"
+    ],
+    [
+      "listend_let_it_snow"
+    ],
+    [
+      "listend_rickroll"
+    ],
+    [
+      "listend_YMCA"
     ]
-  },
-  "parent": "snorlax-itemforge:advancement_songs_root"
+  ],
+  "parent": "snorlax-itemforge:advancement_songs"
 }

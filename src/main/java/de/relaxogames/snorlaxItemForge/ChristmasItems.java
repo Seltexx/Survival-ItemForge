@@ -202,6 +202,20 @@ public class ChristmasItems {
         unbakedGingerbreadRecipe.addIngredient(Material.COCOA_BEANS);
         unbakedGingerbreadRecipe.addIngredient(Material.EGG);
         Bukkit.addRecipe(unbakedGingerbreadRecipe);
+        
+        ShapelessRecipe unbakedGingerbreadRecipeBlueEgg = new ShapelessRecipe(new NamespacedKey(ItemForge.getForge(), "unbaked_gingerbread_recipe_blue_egg"), getUnbakedGingerbread());
+        unbakedGingerbreadRecipeBlueEgg.addIngredient(Material.WHEAT);
+        unbakedGingerbreadRecipeBlueEgg.addIngredient(Material.SUGAR);
+        unbakedGingerbreadRecipeBlueEgg.addIngredient(Material.COCOA_BEANS);
+        unbakedGingerbreadRecipeBlueEgg.addIngredient(Material.BLUE_EGG);
+        Bukkit.addRecipe(unbakedGingerbreadRecipeBlueEgg);
+        
+        ShapelessRecipe unbakedGingerbreadRecipeBrownEgg = new ShapelessRecipe(new NamespacedKey(ItemForge.getForge(), "unbaked_gingerbread_recipe_brown_egg"), getUnbakedGingerbread());
+        unbakedGingerbreadRecipeBrownEgg.addIngredient(Material.WHEAT);
+        unbakedGingerbreadRecipeBrownEgg.addIngredient(Material.SUGAR);
+        unbakedGingerbreadRecipeBrownEgg.addIngredient(Material.COCOA_BEANS);
+        unbakedGingerbreadRecipeBrownEgg.addIngredient(Material.BROWN_EGG);
+        Bukkit.addRecipe(unbakedGingerbreadRecipeBrownEgg);
 
         // Gingerbread Man Recipe (Smoker)
         SmokingRecipe gingerbreadSmoking = new SmokingRecipe(new NamespacedKey(ItemForge.getForge(), "gingerbread_smoking"), getGingerbreadMan(), new RecipeChoice.ExactChoice(getUnbakedGingerbread()), 0.35f, 100);
@@ -221,7 +235,21 @@ public class ChristmasItems {
         christmasPuddingRecipe.addIngredient(Material.SUGAR);
         christmasPuddingRecipe.addIngredient(Material.SWEET_BERRIES);
         Bukkit.addRecipe(christmasPuddingRecipe);
+        
+        ShapelessRecipe christmasPuddingRecipeBlueEgg = new ShapelessRecipe(new NamespacedKey(ItemForge.getForge(), "christmas_pudding_recipe_blue_egg"), getUnmixedPudding());
+        christmasPuddingRecipeBlueEgg.addIngredient(Material.WHEAT);
+        christmasPuddingRecipeBlueEgg.addIngredient(Material.BLUE_EGG);
+        christmasPuddingRecipeBlueEgg.addIngredient(Material.SUGAR);
+        christmasPuddingRecipeBlueEgg.addIngredient(Material.SWEET_BERRIES);
+        Bukkit.addRecipe(christmasPuddingRecipeBlueEgg);
 
+        ShapelessRecipe christmasPuddingRecipeBrownEgg = new ShapelessRecipe(new NamespacedKey(ItemForge.getForge(), "christmas_pudding_recipe_brown_egg"), getUnmixedPudding());
+        christmasPuddingRecipeBrownEgg.addIngredient(Material.WHEAT);
+        christmasPuddingRecipeBrownEgg.addIngredient(Material.BROWN_EGG);
+        christmasPuddingRecipeBrownEgg.addIngredient(Material.SUGAR);
+        christmasPuddingRecipeBrownEgg.addIngredient(Material.SWEET_BERRIES);
+        Bukkit.addRecipe(christmasPuddingRecipeBrownEgg);
+        
         // Christmas Pudding Baking (Smoker)
         SmokingRecipe puddingSmoking = new SmokingRecipe(new NamespacedKey(ItemForge.getForge(), "pudding_smoking"), getChristmasPudding(), new RecipeChoice.ExactChoice(getUnmixedPudding()), 0.35f, 200);
         Bukkit.addRecipe(puddingSmoking);

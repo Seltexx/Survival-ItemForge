@@ -8,6 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.TNTPrimeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -34,7 +35,7 @@ public class DisableListener implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.NORMAL)
     public void onEntityExplode(EntityDamageByEntityEvent e){
         Entity entity = e.getEntity();
 
@@ -42,34 +43,50 @@ public class DisableListener implements Listener {
         if (entity instanceof TNTPrimed && fileManager.disabledTNT()) {
             e.setCancelled(true);
             entity.remove();
+            e.setDamage(0);
             entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
             return;
         }
 
-        // TNT-Minecart
-        if (entity instanceof ExplosiveMinecart && fileManager.disabledTNTMinecart()) {
-            e.setCancelled(true);
-            entity.remove();
-            entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
-            return;
-        }
+//        // TNT-Minecart
+//        if (entity instanceof ExplosiveMinecart && fileManager.disabledTNTMinecart()) {
+//            e.setCancelled(true);
+//            entity.remove();
+//            e.setDamage(0);
+//            entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
+//            return;
+//        }
 
         // Ender Crystal
         if (entity instanceof EnderCrystal && fileManager.disabledEndCrystals()) {
             e.setCancelled(true);
+            e.setDamage(0);
             entity.remove();
-            entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
+            if (!entity.getWorld().getName().contains("end"))entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3,3,3);
+            else {
+                entity.getWorld().createExplosion(entity.getLocation(), 2);
+            }
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onTNTMinecart(EntityExplodeEvent e){
         if (!fileManager.disabledTNTMinecart())return;
         Entity exploder = e.getEntity();
         if (!(exploder instanceof ExplosiveMinecart tntMinecart))return;
         e.setCancelled(true);
-        tntMinecart.remove();
         exploder.getLocation().getWorld().spawnParticle(Particle.HEART, e.getLocation(), 20, 3, 3, 3);
     }
+
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onMinecartExplosionDamage(EntityDamageEvent e) {
+        if (!fileManager.disabledTNTMinecart()) return;
+        DamageSource source = e.getDamageSource();
+        if (source != null) return;
+
+        e.setDamage(0);
+        e.setCancelled(true);
+    }
+
 
 }

@@ -155,12 +155,7 @@ public class HeadshotEnchantmentListener implements Listener {
     private List<Component> updateLore(ItemStack stack, Locale locale, Enchantment banned){
         ItemMeta resultMet = stack.getItemMeta();
         List<Component> lore = new ArrayList<>();
-
-        for (Enchantment enchantment : stack.getEnchantments().keySet()){
-            if (enchantment.equals(banned))continue;
-            lore.add(enchantment.displayName(stack.getEnchantmentLevel(enchantment)));
-        }
-
+    
         lore.add(Component.text(Lingo.getLibrary().getMessage(locale, "Head-Drop-Book-Lore")));
         lore.add(Component.text(" "));
         lore.add(Component.text(" "));

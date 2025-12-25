@@ -43,6 +43,7 @@ public abstract class CustomVillager {
     protected List<MerchantRecipe> stockList;
     protected final CraftVillager nmsVillager;
     protected final World currentWorld;
+    protected Villager.Type formerVillagerType;
 
     protected Block workingStation;
     protected CustomBlockData workbenchData;
@@ -79,7 +80,7 @@ public abstract class CustomVillager {
             new NamespacedKey(ItemForge.getForge(), "price_multiplier");
     private static final NamespacedKey KEY_WORKED =
             new NamespacedKey(ItemForge.getForge(), "times_worked");
-
+    private static final NamespacedKey FORMER_ORIGIN = new NamespacedKey(ItemForge.getForge(), "former_origin");
     // --------- WORKBENCH ---------
     protected static final NamespacedKey BLOCK_BLOCKED_BY =
             new NamespacedKey(ItemForge.getForge(), "villager_uuid");
@@ -135,6 +136,10 @@ public abstract class CustomVillager {
                     break;
                 }
             }
+        }
+
+        if (villager.getPersistentDataContainer().has(FORMER_ORIGIN, PersistentDataType.STRING)) {
+            formerVillagerType = Registry.VILLAGER_TYPE.get(FORMER_ORIGIN);
         }
         getLevel();
         getLevelDisplay();
@@ -209,6 +214,9 @@ public abstract class CustomVillager {
         Block block = nearest.getBlock();
         Profession prof = Profession.convertBlockType(block.getType());
         if (prof == null) return false;
+
+        formerVillagerType = villager.getVillagerType();
+        villager.getPersistentDataContainer().set(FORMER_ORIGIN, PersistentDataType.STRING, villager.getVillagerType().getKey().getKey());
 
         workbenchData = new CustomBlockData(block, ItemForge.getForge());
         if (workbenchData.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) return false;
@@ -567,6 +575,7 @@ public abstract class CustomVillager {
     }
 
     public void removeWorkingStation() {
+        loadPersistent();
         TextDisplay display = getLevelDisplay();
         if (display != null) {
             display.remove();
@@ -588,9 +597,8 @@ public abstract class CustomVillager {
         villager.getPersistentDataContainer().remove(KEY_WORKED);
         villager.customName(null);
         villager.getEquipment().clear();
-        villager.setProfession(Villager.Profession.NITWIT);
         villager.setProfession(Villager.Profession.NONE);
-        //villager.setVillagerType(Villager.Type.PLAINS);
+        villager.setVillagerType(formerVillagerType);
     }
     public World getCurrentWorld() {
         return currentWorld;

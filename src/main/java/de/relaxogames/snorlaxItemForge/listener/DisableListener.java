@@ -1,37 +1,42 @@
 package de.relaxogames.snorlaxItemForge.listener;
 
 import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.TNTPrimeEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+
+import de.relaxogames.snorlaxItemForge.FileManager;
 
 public class DisableListener implements Listener {
 
-    @EventHandler
-    public void onCrystalExplode(EntityExplodeEvent e) {
-        if (!(e.getEntity() instanceof EnderCrystal crystal))
-            return;
+    private FileManager fileManager = new FileManager();
 
-        if (e.getLocation().getWorld().getEnvironment() != World.Environment.THE_END) {
-            e.setCancelled(true);
-            crystal.remove();
-            e.getLocation().getWorld().spawnParticle(Particle.HEART, e.getLocation(), 20, 3, 3, 3);
-        } else {
-            e.blockList().clear();
-        }
+    @EventHandler
+    public void onCrystal(EntityExplodeEvent e) {
+        if (!fileManager.disabledEndCrystals())
+            return;
+        Entity exploder = e.getEntity();
+        if (!(exploder instanceof EnderCrystal crystal))
+            return;
+        e.setCancelled(true);
+        crystal.remove();
+        exploder.getLocation().getWorld().spawnParticle(Particle.HEART, e.getLocation(), 20, 3, 3, 3);
     }
 
     @EventHandler
-    public void onTNTMinecartExplode(EntityExplodeEvent e) {
-        if (!(e.getEntity() instanceof ExplosiveMinecart))
+    public void onTNTExplode(TNTPrimeEvent e) {
+        if (!fileManager.disabledTNT())
             return;
-        e.blockList().clear();
+        e.setCancelled(true);
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -46,17 +51,6 @@ public class DisableListener implements Listener {
             entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20, 3, 3, 3);
             return;
         }
-
-        // // TNT-Minecart
-        // if (entity instanceof ExplosiveMinecart && fileManager.disabledTNTMinecart())
-        // {
-        // e.setCancelled(true);
-        // entity.remove();
-        // e.setDamage(0);
-        // entity.getWorld().spawnParticle(Particle.HEART, entity.getLocation(), 20,
-        // 3,3,3);
-        // return;
-        // }
 
         // Ender Crystal
         if (entity instanceof EnderCrystal && fileManager.disabledEndCrystals()) {

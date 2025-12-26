@@ -91,37 +91,55 @@ public class VillagerWrapper {
     }
 
     private static String findNearestJob(Location loc, int radius) {
-        double closestDistance = Double.MAX_VALUE;
-        String foundProfession = null;
-
         World world = loc.getWorld();
         if (world == null)
             return null;
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
+        int startX = loc.getBlockX();
+        int startY = loc.getBlockY();
+        int startZ = loc.getBlockZ();
 
-                    Block block = world.getBlockAt(
-                            loc.getBlockX() + x,
-                            loc.getBlockY() + y,
-                            loc.getBlockZ() + z);
+        double closestDistanceSq = Double.MAX_VALUE;
+        String foundProfession = null;
 
-                    CustomVillager.Profession prof = CustomVillager.Profession.convertBlockType(block.getType());
-                    if (prof == null)
-                        continue;
+        int actualRadius = Math.min(radius, 64);
 
-                    CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
-                    if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING))
-                        continue;
+        // Suche in Schichten von innen nach außen
+        for (int r = 1; r <= actualRadius; r++) {
+            boolean foundInThisLayer = false;
 
-                    double distance = loc.distanceSquared(block.getLocation());
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        foundProfession = prof.getKey().getKey();
+            for (int x = -r; x <= r; x++) {
+                for (int y = -Math.min(r, 8); y <= Math.min(r, 8); y++) {
+                    for (int z = -r; z <= r; z++) {
+                        // Nur auf der Außenhülle des aktuellen Radius-Würfels suchen
+                        if (Math.abs(x) != r && Math.abs(y) != r && Math.abs(z) != r)
+                            continue;
+
+                        Block block = world.getBlockAt(startX + x, startY + y, startZ + z);
+                        Material type = block.getType();
+
+                        if (type.isAir() || type == Material.GRASS_BLOCK || type == Material.DIRT)
+                            continue;
+
+                        CustomVillager.Profession prof = CustomVillager.Profession.convertBlockType(block.getType());
+                        if (prof == null)
+                            continue;
+
+                        CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
+                        if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING))
+                            continue;
+
+                        double distance = loc.distanceSquared(block.getLocation());
+                        if (distance < closestDistanceSq) {
+                            closestDistanceSq = distance;
+                            foundProfession = prof.getKey().getKey();
+                            foundInThisLayer = true;
+                        }
                     }
                 }
             }
+            if (foundInThisLayer)
+                return foundProfession;
         }
         return foundProfession;
     }

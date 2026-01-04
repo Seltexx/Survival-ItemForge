@@ -27,8 +27,8 @@ dependencies {
 
     compileOnly('com.github.koca2000:NoteBlockAPI:1.6.2')
 
-    implementation 'de.relaxogames:LingoAPI:inDev-1.7-RC01'
-    shadow        ("de.relaxogames:LingoAPI:inDev-1.7-RC01")
+    implementation 'de.relaxogames:LingoAPI:inDev-1.7-RC02'
+    shadow        ("de.relaxogames:LingoAPI:inDev-1.7-RC02")
 
     implementation 'com.jeff-media:custom-block-data:2.2.4'
     shadow        'com.jeff-media:custom-block-data:2.2.4'

@@ -14,9 +14,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarFlag;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.craftbukkit.entity.CraftVillager;
 import org.bukkit.entity.Display;
@@ -54,58 +51,46 @@ public abstract class CustomVillager {
     protected int timesWorked;
 
     // --------- VILLAGER ---------------------
-    protected static final NamespacedKey WORKING_TABLE_KEY =
-            new NamespacedKey(ItemForge.getForge(), "working_station");
-    protected static final NamespacedKey PROFESSION_KEY =
-            new NamespacedKey(ItemForge.getForge(), "villager_profession");
-    protected static final NamespacedKey PROFESSION_LEVEL =
-            new NamespacedKey(ItemForge.getForge(), "villager_profession_level");
-    protected static final NamespacedKey PROFESSION_EXPERIENCE =
-            new NamespacedKey(ItemForge.getForge(), "villager_profession_xp");
-    private static final NamespacedKey TRADE_LOCKER =
-            new NamespacedKey(ItemForge.getForge(), "trade_locker");
-    private static final NamespacedKey KEY_TRADE_RESULT =
-            new NamespacedKey(ItemForge.getForge(), "trade_result");
-    private static final NamespacedKey KEY_INGREDIENT_ITEM =
-            new NamespacedKey(ItemForge.getForge(), "ingredient_item");
-    private static final NamespacedKey KEY_INGREDIENTS =
-            new NamespacedKey(ItemForge.getForge(), "ingredients");
-    private static final NamespacedKey KEY_USES =
-            new NamespacedKey(ItemForge.getForge(), "uses");
-    private static final NamespacedKey KEY_MAX_USES =
-            new NamespacedKey(ItemForge.getForge(), "max_uses");
-    private static final NamespacedKey KEY_DEMAND =
-            new NamespacedKey(ItemForge.getForge(), "demand");
-    private static final NamespacedKey KEY_PRICE_MULT =
-            new NamespacedKey(ItemForge.getForge(), "price_multiplier");
-    private static final NamespacedKey KEY_WORKED =
-            new NamespacedKey(ItemForge.getForge(), "times_worked");
+    protected static final NamespacedKey WORKING_TABLE_KEY = new NamespacedKey(ItemForge.getForge(), "working_station");
+    protected static final NamespacedKey PROFESSION_KEY = new NamespacedKey(ItemForge.getForge(),
+            "villager_profession");
+    protected static final NamespacedKey PROFESSION_LEVEL = new NamespacedKey(ItemForge.getForge(),
+            "villager_profession_level");
+    protected static final NamespacedKey PROFESSION_EXPERIENCE = new NamespacedKey(ItemForge.getForge(),
+            "villager_profession_xp");
+    private static final NamespacedKey TRADE_LOCKER = new NamespacedKey(ItemForge.getForge(), "trade_locker");
+    private static final NamespacedKey KEY_TRADE_RESULT = new NamespacedKey(ItemForge.getForge(), "trade_result");
+    private static final NamespacedKey KEY_INGREDIENT_ITEM = new NamespacedKey(ItemForge.getForge(), "ingredient_item");
+    private static final NamespacedKey KEY_INGREDIENTS = new NamespacedKey(ItemForge.getForge(), "ingredients");
+    private static final NamespacedKey KEY_USES = new NamespacedKey(ItemForge.getForge(), "uses");
+    private static final NamespacedKey KEY_MAX_USES = new NamespacedKey(ItemForge.getForge(), "max_uses");
+    private static final NamespacedKey KEY_DEMAND = new NamespacedKey(ItemForge.getForge(), "demand");
+    private static final NamespacedKey KEY_PRICE_MULT = new NamespacedKey(ItemForge.getForge(), "price_multiplier");
+    private static final NamespacedKey KEY_WORKED = new NamespacedKey(ItemForge.getForge(), "times_worked");
     private static final NamespacedKey FORMER_ORIGIN = new NamespacedKey(ItemForge.getForge(), "former_origin");
     // --------- WORKBENCH ---------
-    protected static final NamespacedKey BLOCK_BLOCKED_BY =
-            new NamespacedKey(ItemForge.getForge(), "villager_uuid");
-    protected static final NamespacedKey BLOCK_TEXT_DISPLAY_UUID =
-            new NamespacedKey(ItemForge.getForge(), "text_display_id");
+    protected static final NamespacedKey BLOCK_BLOCKED_BY = new NamespacedKey(ItemForge.getForge(), "villager_uuid");
+    protected static final NamespacedKey BLOCK_TEXT_DISPLAY_UUID = new NamespacedKey(ItemForge.getForge(),
+            "text_display_id");
 
     public CustomVillager(Villager villager) {
         this.villager = villager;
         this.currentWorld = villager.getWorld();
         this.nmsVillager = (CraftVillager) villager;
         loadPersistent();
-        //moveToNearestWorkingStation();
+        // moveToNearestWorkingStation();
     }
+
     public CustomVillager(Villager villager, Component invTitle) {
         this.villager = villager;
         this.merchant = villager;
         this.currentWorld = villager.getWorld();
         this.nmsVillager = (CraftVillager) villager;
         loadPersistent();
-        //moveToNearestWorkingStation();
+        // moveToNearestWorkingStation();
         villager.customName(invTitle);
         villager.setCustomNameVisible(false);
     }
-
-
 
     protected void loadPersistent() {
         String stored = villager.getPersistentDataContainer()
@@ -120,8 +105,7 @@ public abstract class CustomVillager {
                         Double.parseDouble(p[1]),
                         Double.parseDouble(p[2]),
                         Float.parseFloat(p[3]),
-                        Float.parseFloat(p[4])
-                );
+                        Float.parseFloat(p[4]));
                 workingStation = locWork.getBlock();
             }
         }
@@ -148,78 +132,104 @@ public abstract class CustomVillager {
 
     public boolean walkTo(Location target, double speed, boolean work) {
         var navigator = nmsVillager.getHandle().getNavigation();
-        navigator.stop();
         navigator.moveTo(target.getX(), target.getY(), target.getZ(), speed);
 
-        final boolean[] done = {false};
+        final double targetX = target.getX();
+        final double targetY = target.getY();
+        final double targetZ = target.getZ();
+        final double distSqThreshold = 3.0 * 3.0;
+
         new BukkitRunnable() {
+            private int ticks = 0;
+
             @Override
             public void run() {
                 if (navigator.isStuck() || villager.isInsideVehicle()) {
                     navigator.stop();
                     cancel();
-                    done[0] = false;
                     return;
                 }
 
-                if (villager.getLocation().distance(target) <= 3) {
+                if (villager.getLocation().distanceSquared(target) <= distSqThreshold) {
                     navigator.stop();
                     cancel();
-                    if (work) workOnStation();
-                    done[0] = true;
+                    if (work)
+                        workOnStation();
                     return;
                 }
 
-                navigator.moveTo(target.getX(), target.getY(), target.getZ(), speed);
+                // Nur alle 20 Ticks das Ziel im Navigator aktualisieren, falls wir noch nicht
+                // da sind
+                if (ticks++ % 4 == 0) {
+                    navigator.moveTo(targetX, targetY, targetZ, speed);
+                }
             }
-        }.runTaskTimer(ItemForge.getForge(), 0L, 5L);
-        return done[0];
+        }.runTaskTimer(ItemForge.getForge(), 5L, 5L);
+        return true; // Gibt sofort true zurück, weil der Prozess asynchron läuft
     }
+
     public void setWorkingStation(Location location) {
-        if (location == null) return;
+        if (location == null)
+            return;
         Block block = location.getBlock();
-        if (getProfession() == null) return;
-        if (block.getType() != getProfession().getWorkTable()) return;
+        if (getProfession() == null)
+            return;
+        if (block.getType() != getProfession().getWorkTable())
+            return;
         locWork = location;
         workingStation = block;
     }
+
     public Profession getProfession() {
         return profession;
     }
+
     public Location getWorkstationLocation() {
         return locWork;
     }
+
     public boolean moveToOwnWorkingStation() {
-        if (locWork == null) return false;
+        if (locWork == null)
+            return false;
         return walkTo(locWork, fM.villagerWalkingSpeed(), false);
     }
-    public void work(boolean force){
-        if (locWork == null)return;
-        if (!force)if (getTimesWorked() >= fM.villagerRestockAmount())return;
+
+    public void work(boolean force) {
+        if (locWork == null)
+            return;
+        if (!force)
+            if (getTimesWorked() >= fM.villagerRestockAmount())
+                return;
         walkTo(locWork, fM.villagerWalkingSpeed(), true);
     }
 
     public boolean moveToNearestWorkingStation() {
-        if (!villager.isAdult()) return false;
-        if (locWork != null) return false;
-        if (villager.getProfession() != Villager.Profession.NONE && profession == null) return false;
+        if (!villager.isAdult())
+            return false;
+        if (locWork != null)
+            return false;
+        if (villager.getProfession() != Villager.Profession.NONE && profession == null)
+            return false;
 
         Location nearest = findNearestBlock(
                 villager.getLocation(),
-                fM.villagerWorkingTableSearch()
-        );
+                fM.villagerWorkingTableSearch());
 
-        if (nearest == null) return false;
+        if (nearest == null)
+            return false;
 
         Block block = nearest.getBlock();
         Profession prof = Profession.convertBlockType(block.getType());
-        if (prof == null) return false;
+        if (prof == null)
+            return false;
 
         formerVillagerType = villager.getVillagerType();
-        villager.getPersistentDataContainer().set(FORMER_ORIGIN, PersistentDataType.STRING, villager.getVillagerType().getKey().getKey());
+        villager.getPersistentDataContainer().set(FORMER_ORIGIN, PersistentDataType.STRING,
+                villager.getVillagerType().getKey().getKey());
 
         workbenchData = new CustomBlockData(block, ItemForge.getForge());
-        if (workbenchData.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) return false;
+        if (workbenchData.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING))
+            return false;
 
         workbenchData.set(BLOCK_BLOCKED_BY, PersistentDataType.STRING,
                 villager.getUniqueId().toString());
@@ -233,14 +243,12 @@ public abstract class CustomVillager {
         villager.getPersistentDataContainer().set(
                 WORKING_TABLE_KEY,
                 PersistentDataType.STRING,
-                serialize(nearest)
-        );
+                serialize(nearest));
 
         villager.getPersistentDataContainer().set(
                 PROFESSION_KEY,
                 PersistentDataType.STRING,
-                prof.getKey().getKey()
-        );
+                prof.getKey().getKey());
 
         ParticleBuilder particleBuilder = Particle.HAPPY_VILLAGER.builder();
 
@@ -275,12 +283,18 @@ public abstract class CustomVillager {
                     .spawn();
         }
 
-        //HINLAUFEN
+        // HINLAUFEN
         var navigator = nmsVillager.getHandle().getNavigation();
-        navigator.stop();
         navigator.moveTo(nearest.getX(), nearest.getY(), nearest.getZ(), fM.villagerSprintingSpeed());
 
+        final double targetX = nearest.getX();
+        final double targetY = nearest.getY();
+        final double targetZ = nearest.getZ();
+        final double speed = fM.villagerSprintingSpeed();
+
         new BukkitRunnable() {
+            private int ticks = 0;
+
             @Override
             public void run() {
                 if (navigator.isStuck() || villager.isInsideVehicle()) {
@@ -290,28 +304,35 @@ public abstract class CustomVillager {
                     return;
                 }
 
-                if (villager.getLocation().distanceSquared(nearest) <= 3.5) {
+                if (villager.getLocation().distanceSquared(nearest) <= 3.5 * 3.5) {
                     navigator.stop();
                     cancel();
                     acceptedJobOpportunity();
                     return;
                 }
 
-                navigator.moveTo(nearest.getX(), nearest.getY(), nearest.getZ(), fM.villagerSprintingSpeed());
+                if (ticks++ % 4 == 0) {
+                    navigator.moveTo(targetX, targetY, targetZ, speed);
+                }
             }
-        }.runTaskTimer(ItemForge.getForge(), 0L, 5L);
+        }.runTaskTimer(ItemForge.getForge(), 5L, 5L);
         return true;
     }
 
-    private void acceptedJobOpportunity(){
+    private void acceptedJobOpportunity() {
         villager.setCustomNameVisible(false);
         createLevelDisplay();
         acceptJob();
     }
+
     public abstract void acceptJob();
+
     protected abstract void workOnStation();
+
     protected abstract void initializeTrades();
+
     public abstract void replenishTrades();
+
     public abstract List<MerchantRecipe> buildMerchant();
 
     public List<MerchantRecipe> getStockList() {
@@ -320,9 +341,12 @@ public abstract class CustomVillager {
 
     public void addExperience(int amount, Villager villager) {
         getVillagerExperience();
-        if (amount <= 0) return;
-        if (level == null) level = getLevel();
-        if (level == Level.MASTER) return;
+        if (amount <= 0)
+            return;
+        if (level == null)
+            level = getLevel();
+        if (level == Level.MASTER)
+            return;
 
         experience += amount;
 
@@ -343,6 +367,7 @@ public abstract class CustomVillager {
 
         update(villager);
     }
+
     public void update(Villager villager) {
         villager.setVillagerExperience(experience);
         villager.setVillagerLevel(level.getNmsLevel());
@@ -350,28 +375,28 @@ public abstract class CustomVillager {
         villager.getPersistentDataContainer().set(
                 PROFESSION_LEVEL,
                 PersistentDataType.INTEGER,
-                level.getNmsLevel()
-        );
+                level.getNmsLevel());
 
         villager.getPersistentDataContainer().set(
                 PROFESSION_EXPERIENCE,
                 PersistentDataType.INTEGER,
-                experience
-        );
+                experience);
         updateWorkbench();
     }
-    public void restock(){
+
+    public void restock() {
         villager.getPersistentDataContainer().set(
                 KEY_WORKED,
                 PersistentDataType.INTEGER,
-                getTimesWorked()+1
-        );
+                getTimesWorked() + 1);
         initializeTrades();
         villager.setRecipes(importTrades());
     }
+
     public Merchant getMerchant() {
         return merchant;
     }
+
     public Level getLevel() {
         if (level == null) {
             Integer fromPDC = villager.getPersistentDataContainer()
@@ -385,6 +410,7 @@ public abstract class CustomVillager {
         }
         return level;
     }
+
     public int getVillagerExperience() {
         Integer fromPDC = villager.getPersistentDataContainer()
                 .get(PROFESSION_EXPERIENCE, PersistentDataType.INTEGER);
@@ -395,7 +421,8 @@ public abstract class CustomVillager {
         }
         return experience;
     }
-    public int getTimesWorked(){
+
+    public int getTimesWorked() {
         Integer fromPDC = villager.getPersistentDataContainer()
                 .get(KEY_WORKED, PersistentDataType.INTEGER);
         if (fromPDC == null) {
@@ -406,16 +433,16 @@ public abstract class CustomVillager {
         return timesWorked;
     }
 
-    public void reimportTrades(List<MerchantRecipe> trades){
+    public void reimportTrades(List<MerchantRecipe> trades) {
         villager.getPersistentDataContainer().remove(TRADE_LOCKER);
         exportTrades(trades);
     }
+
     public void exportTrades(List<MerchantRecipe> trades) {
         PersistentDataContainer root = villager.getPersistentDataContainer();
 
         PersistentDataContainer[] tradeTags = trades.stream().map(trade -> {
-            PersistentDataContainer tag =
-                    root.getAdapterContext().newPersistentDataContainer();
+            PersistentDataContainer tag = root.getAdapterContext().newPersistentDataContainer();
 
             // Result
             tag.set(KEY_TRADE_RESULT,
@@ -429,19 +456,17 @@ public abstract class CustomVillager {
             tag.set(KEY_PRICE_MULT, PersistentDataType.FLOAT, trade.getPriceMultiplier());
 
             // Ingredients (max 2, Vanilla-Regel)
-            PersistentDataContainer[] ingredientTags =
-                    trade.getIngredients().stream()
-                            .limit(2)
-                            .map(ingredient -> {
-                                PersistentDataContainer ingTag =
-                                        root.getAdapterContext().newPersistentDataContainer();
+            PersistentDataContainer[] ingredientTags = trade.getIngredients().stream()
+                    .limit(2)
+                    .map(ingredient -> {
+                        PersistentDataContainer ingTag = root.getAdapterContext().newPersistentDataContainer();
 
-                                ingTag.set(KEY_INGREDIENT_ITEM,
-                                        PersistentDataType.BYTE_ARRAY,
-                                        ItemBuilder.serializeItem(ingredient));
+                        ingTag.set(KEY_INGREDIENT_ITEM,
+                                PersistentDataType.BYTE_ARRAY,
+                                ItemBuilder.serializeItem(ingredient));
 
-                                return ingTag;
-                            }).toArray(PersistentDataContainer[]::new);
+                        return ingTag;
+                    }).toArray(PersistentDataContainer[]::new);
 
             tag.set(KEY_INGREDIENTS,
                     PersistentDataType.TAG_CONTAINER_ARRAY,
@@ -454,11 +479,11 @@ public abstract class CustomVillager {
                 PersistentDataType.TAG_CONTAINER_ARRAY,
                 tradeTags);
     }
+
     public List<MerchantRecipe> importTrades() {
         PersistentDataContainer root = villager.getPersistentDataContainer();
 
-        PersistentDataContainer[] tradeTags =
-                root.get(TRADE_LOCKER, PersistentDataType.TAG_CONTAINER_ARRAY);
+        PersistentDataContainer[] tradeTags = root.get(TRADE_LOCKER, PersistentDataType.TAG_CONTAINER_ARRAY);
 
         if (tradeTags == null || tradeTags.length == 0) {
             return List.of();
@@ -468,10 +493,10 @@ public abstract class CustomVillager {
 
         for (PersistentDataContainer tag : tradeTags) {
 
-            byte[] resultData =
-                    tag.get(KEY_TRADE_RESULT, PersistentDataType.BYTE_ARRAY);
+            byte[] resultData = tag.get(KEY_TRADE_RESULT, PersistentDataType.BYTE_ARRAY);
 
-            if (resultData == null) continue;
+            if (resultData == null)
+                continue;
 
             ItemStack result = ItemBuilder.deserializeItem(resultData);
 
@@ -490,16 +515,15 @@ public abstract class CustomVillager {
             recipe.setPriceMultiplier(tag.getOrDefault(KEY_PRICE_MULT,
                     PersistentDataType.FLOAT, 0f));
 
-            PersistentDataContainer[] ingTags =
-                    tag.get(KEY_INGREDIENTS, PersistentDataType.TAG_CONTAINER_ARRAY);
+            PersistentDataContainer[] ingTags = tag.get(KEY_INGREDIENTS, PersistentDataType.TAG_CONTAINER_ARRAY);
 
             // Ohne Ingredients → Trade überspringen (niemals ungültige Trades erzeugen!)
-            if (ingTags == null || ingTags.length == 0) continue;
+            if (ingTags == null || ingTags.length == 0)
+                continue;
 
             for (int i = 0; i < Math.min(2, ingTags.length); i++) {
-                byte[] ingData =
-                        ingTags[i].get(KEY_INGREDIENT_ITEM,
-                                PersistentDataType.BYTE_ARRAY);
+                byte[] ingData = ingTags[i].get(KEY_INGREDIENT_ITEM,
+                        PersistentDataType.BYTE_ARRAY);
 
                 if (ingData != null) {
                     recipe.addIngredient(
@@ -508,13 +532,15 @@ public abstract class CustomVillager {
             }
 
             // Sicherheit: nachträglich prüfen
-            if (recipe.getIngredients().isEmpty()) continue;
+            if (recipe.getIngredients().isEmpty())
+                continue;
 
             trades.add(recipe);
         }
 
         return trades;
     }
+
     protected String serialize(Location loc) {
         return loc.getX() + "," +
                 loc.getY() + "," +
@@ -526,52 +552,84 @@ public abstract class CustomVillager {
     public boolean hasBlockInRange() {
         return findNearestBlock(
                 villager.getLocation(),
-                fM.villagerWorkingTableSearch()
-        ) != null;
+                fM.villagerWorkingTableSearch()) != null;
     }
+
     public boolean hasPath() {
         return nmsVillager.getHandle().getNavigation().getPath() != null;
     }
-    public Block nearestWorkingStation(){
+
+    public Block nearestWorkingStation() {
         Location possible = findNearestBlock(villager.getLocation(), fM.villagerWorkingTableSearch());
-        if (possible == null) return null;
+        if (possible == null)
+            return null;
         CustomBlockData possibleBlockData = new CustomBlockData(possible.getBlock(), ItemForge.getForge());
-        if (possibleBlockData.has(BLOCK_BLOCKED_BY)) return null;
+        if (possibleBlockData.has(BLOCK_BLOCKED_BY))
+            return null;
         return possible.getBlock();
     }
-    public void assignNewWorkingStation(Block station, boolean walkTo){
+
+    public void assignNewWorkingStation(Block station, boolean walkTo) {
         setWorkingStation(station.getLocation());
-        if (walkTo)walkTo(station.getLocation(), fM.villagerWalkingSpeed(), true);
+        if (walkTo)
+            walkTo(station.getLocation(), fM.villagerWalkingSpeed(), true);
     }
+
     protected Location findNearestBlock(Location loc, int radius) {
-        double closest = Double.MAX_VALUE;
+        World world = loc.getWorld();
+        if (world == null)
+            return null;
+
+        int startX = loc.getBlockX();
+        int startY = loc.getBlockY();
+        int startZ = loc.getBlockZ();
+
+        double closestDistanceSq = Double.MAX_VALUE;
         Location result = null;
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
+        // Optimierung: Radius begrenzen, falls er zu groß ist
+        int actualRadius = Math.min(radius, 64);
 
-                    Block block = loc.getWorld().getBlockAt(
-                            loc.getBlockX() + x,
-                            loc.getBlockY() + y,
-                            loc.getBlockZ() + z
-                    );
+        // Suche in Schichten von innen nach außen
+        for (int r = 1; r <= actualRadius; r++) {
+            for (int x = -r; x <= r; x++) {
+                for (int y = -Math.min(r, 8); y <= Math.min(r, 8); y++) { // Villager suchen meist auf gleicher Ebene
+                    for (int z = -r; z <= r; z++) {
+                        // Nur auf der Außenhülle des aktuellen Radius-Würfels suchen, um Doppelte zu
+                        // vermeiden?
+                        // Oder einfach normal loopen, aber Y-Bereich einschränken.
+                        if (Math.abs(x) != r && Math.abs(y) != r && Math.abs(z) != r)
+                            continue;
 
-                    Profession p = Profession.convertBlockType(block.getType());
-                    if (p == null) continue;
+                        Block block = world.getBlockAt(startX + x, startY + y, startZ + z);
+                        Material type = block.getType();
 
-                    CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
-                    if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING)) continue;
+                        // Schneller Check auf Luft/Gras etc.
+                        if (type.isAir() || type == Material.GRASS_BLOCK || type == Material.DIRT)
+                            continue;
 
-                    double d = loc.distanceSquared(block.getLocation());
-                    if (d < closest) {
-                        closest = d;
-                        result = block.getLocation();
+                        Profession p = Profession.convertBlockType(type);
+                        if (p == null)
+                            continue;
+
+                        CustomBlockData data = new CustomBlockData(block, ItemForge.getForge());
+                        if (data.has(BLOCK_BLOCKED_BY, PersistentDataType.STRING))
+                            continue;
+
+                        double dSq = loc.distanceSquared(block.getLocation());
+                        if (dSq < closestDistanceSq) {
+                            closestDistanceSq = dSq;
+                            result = block.getLocation();
+                            // Da wir von innen nach außen suchen, könnten wir hier abbrechen,
+                            // aber wir müssen die aktuelle Schicht zu Ende suchen.
+                        }
                     }
                 }
             }
+            if (result != null)
+                return result; // Nächste Schicht gefunden!
         }
-        return result;
+        return null;
     }
 
     public void removeWorkingStation() {
@@ -600,39 +658,55 @@ public abstract class CustomVillager {
         villager.setProfession(Villager.Profession.NONE);
         villager.setVillagerType(formerVillagerType);
     }
+
     public World getCurrentWorld() {
         return currentWorld;
     }
+
     public Villager getVillager() {
         return villager;
     }
+
     public CustomBlockData loadWorkbenchData() {
-        if (workingStation == null)return null;
-        if (workbenchData == null){
+        if (workingStation == null)
+            return null;
+        if (workbenchData == null) {
             workbenchData = new CustomBlockData(workingStation, ItemForge.getForge());
         }
         return workbenchData;
     }
-    public void updateWorkbench(){
-        if (levelDisplay == null) getLevelDisplay();
-        if (levelDisplay == null) return;
+
+    public void updateWorkbench() {
+        if (levelDisplay == null)
+            getLevelDisplay();
+        if (levelDisplay == null)
+            return;
         levelDisplay.text(Level.convertLevelToDisplayLine(level));
         levelDisplay.setViewRange(5);
     }
 
     public TextDisplay getLevelDisplay() {
-        if (workingStation == null)return null;
+        if (workingStation == null)
+            return null;
         String fromBlock = loadWorkbenchData().get(BLOCK_TEXT_DISPLAY_UUID, PersistentDataType.STRING);
-        if (fromBlock == null)return null;
+        if (fromBlock == null)
+            return null;
         levelDisplay = (TextDisplay) Bukkit.getEntity(UUID.fromString(fromBlock));
         return levelDisplay;
     }
-    protected void createLevelDisplay(){
-        if (levelDisplay != null)return;
-        if (workbenchData == null)loadWorkbenchData();
-        if (workbenchData.has(BLOCK_TEXT_DISPLAY_UUID, PersistentDataType.STRING))return;
 
-        levelDisplay = getCurrentWorld().spawn(getWorkstationLocation().add(fM.villagerWorkingTableDisplayOffsetX(), fM.villagerWorkingTableDisplayOffsetY(), fM.villagerWorkingTableDisplayOffsetZ()), TextDisplay.class);
+    protected void createLevelDisplay() {
+        if (levelDisplay != null)
+            return;
+        if (workbenchData == null)
+            loadWorkbenchData();
+        if (workbenchData.has(BLOCK_TEXT_DISPLAY_UUID, PersistentDataType.STRING))
+            return;
+
+        levelDisplay = getCurrentWorld().spawn(
+                getWorkstationLocation().add(fM.villagerWorkingTableDisplayOffsetX(),
+                        fM.villagerWorkingTableDisplayOffsetY(), fM.villagerWorkingTableDisplayOffsetZ()),
+                TextDisplay.class);
         workbenchData.set(BLOCK_TEXT_DISPLAY_UUID, PersistentDataType.STRING, levelDisplay.getUniqueId().toString());
 
         levelDisplay.text(Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Villager-Level-Station")
@@ -665,7 +739,8 @@ public abstract class CustomVillager {
 
         public static Profession convertBlockType(Material material) {
             for (Profession p : values()) {
-                if (p.workTable == material) return p;
+                if (p.workTable == material)
+                    return p;
             }
             return null;
         }
@@ -675,7 +750,7 @@ public abstract class CustomVillager {
         }
     }
 
-    public enum Level{
+    public enum Level {
         NOVICE("novice", 1, 10),
         APPRENTICE("apprentice", 2, 15),
         JOURNEYMAN("journeyman", 3, 15),
@@ -685,6 +760,7 @@ public abstract class CustomVillager {
         String key;
         int nmsLevel;
         int neededExperience;
+
         Level(String key, int nmsLevel, int neededExperience) {
             this.key = key;
             this.nmsLevel = nmsLevel;
@@ -703,21 +779,24 @@ public abstract class CustomVillager {
             return new NamespacedKey(ItemForge.getForge(), getKeyString());
         }
 
-        public static Level nextLevel(Level level){
-            if (level.equals(Level.MASTER))return null;
-            for (Level next : Level.values()){
-                if (next.getNmsLevel() <= level.getNmsLevel())continue;
+        public static Level nextLevel(Level level) {
+            if (level.equals(Level.MASTER))
+                return null;
+            for (Level next : Level.values()) {
+                if (next.getNmsLevel() <= level.getNmsLevel())
+                    continue;
                 return next;
             }
             return MASTER;
         }
 
-        public static Level convertFromNMS(int lvl){
-            if (lvl <= 0){
+        public static Level convertFromNMS(int lvl) {
+            if (lvl <= 0) {
                 return NOVICE;
             }
-            for (Level enumLvl : Level.values()){
-                if (enumLvl.getNmsLevel() != lvl)continue;
+            for (Level enumLvl : Level.values()) {
+                if (enumLvl.getNmsLevel() != lvl)
+                    continue;
                 return enumLvl;
             }
             return NOVICE;
@@ -727,31 +806,33 @@ public abstract class CustomVillager {
             return nmsLevel;
         }
 
-        public static Component convertLevelToDisplayLine(Level level){
+        public static Component convertLevelToDisplayLine(Level level) {
             Component component = null;
-            switch (level.getNmsLevel()){
-                case 1:{
+            switch (level.getNmsLevel()) {
+                case 1: {
                     component = Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Villager-Level-1"));
                     return component;
                 }
 
-                case 2:{
-                    component = Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Villager-Level-2").replace("<#D8AF93>", ""))
+                case 2: {
+                    component = Component
+                            .text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Villager-Level-2").replace("<#D8AF93>",
+                                    ""))
                             .color(TextColor.color(216, 175, 147));
                     return component;
                 }
 
-                case 3:{
+                case 3: {
                     component = Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Villager-Level-3"));
                     return component;
                 }
 
-                case 4:{
+                case 4: {
                     component = Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Villager-Level-4"));
                     return component;
                 }
 
-                case 5:{
+                case 5: {
                     component = Component.text(Lingo.getLibrary().getMessage(Locale.GERMAN, "Villager-Level-5"));
                     return component;
                 }
@@ -774,12 +855,10 @@ public abstract class CustomVillager {
             for (int i = 0; i < bars; i++) {
                 if (i < greenBars) {
                     component = component.append(
-                            Component.text("█").color(ServerColors.Chartreuse2.color())
-                    );
+                            Component.text("█").color(ServerColors.Chartreuse2.color()));
                 } else {
                     component = component.append(
-                            Component.text("█").color(NamedTextColor.DARK_GRAY)
-                    );
+                            Component.text("█").color(NamedTextColor.DARK_GRAY));
                 }
             }
 

@@ -21,24 +21,25 @@ public class FileManager {
     public static File advancementFolder;
     public static File discoFolder;
     public static File config;
+    private static FileConfiguration cachedConfig;
     private static List<File> list = new ArrayList<>();
 
-    public static void initialize(){
+    public static void initialize() {
         datafolder = ItemForge.getForge().getDataFolder();
         langFolder = new File(datafolder + "//languages");
         advancementFolder = new File(datafolder + "//advancements");
         discoFolder = new File(datafolder + "//music");
 
-        if (!datafolder.exists()){
+        if (!datafolder.exists()) {
             datafolder.mkdir();
         }
-        if (!langFolder.exists()){
+        if (!langFolder.exists()) {
             langFolder.mkdir();
         }
-        if (!advancementFolder.exists()){
+        if (!advancementFolder.exists()) {
             advancementFolder.mkdir();
         }
-        if (!discoFolder.exists()){
+        if (!discoFolder.exists()) {
             discoFolder.mkdir();
         }
 
@@ -75,6 +76,8 @@ public class FileManager {
             throw new RuntimeException(e);
         }
 
+        reload();
+
         list.add(deFile);
         list.add(enFile);
 
@@ -82,10 +85,15 @@ public class FileManager {
         loadSongs();
     }
 
-    private static void loadAdvancements(){
-        for (Advancement advancement : Advancement.values()){
-            if (advancement.getFileName().isEmpty())continue;
-            File brew_tincture = new File(advancementFolder,  advancement.getFileName() + ".json");
+    public static void reload() {
+        cachedConfig = YamlConfiguration.loadConfiguration(config);
+    }
+
+    private static void loadAdvancements() {
+        for (Advancement advancement : Advancement.values()) {
+            if (advancement.getFileName().isEmpty())
+                continue;
+            File brew_tincture = new File(advancementFolder, advancement.getFileName() + ".json");
             try {
                 if (!brew_tincture.exists()) {
                     InputStream in = ItemForge.getForge().getResource(advancement.getFileName() + ".json");
@@ -98,9 +106,9 @@ public class FileManager {
         }
     }
 
-    private static void loadSongs(){
-        for (MusicDiscs music : MusicDiscs.values()){
-            File nbsFile = new File(discoFolder,  music.getFile() + ".nbs");
+    private static void loadSongs() {
+        for (MusicDiscs music : MusicDiscs.values()) {
+            File nbsFile = new File(discoFolder, music.getFile() + ".nbs");
             try {
                 if (!nbsFile.exists()) {
                     InputStream in = ItemForge.getForge().getResource(music.getFile() + ".nbs");
@@ -113,78 +121,74 @@ public class FileManager {
         }
     }
 
-    public void loadMessages(Lingo lingo){
+    public void loadMessages(Lingo lingo) {
         lingo.loadMessages(list);
     }
 
-    public int jukeboxMaxDistance(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getInt("jukebox.music-distance", 64);
+    private FileConfiguration getConfig() {
+        if (cachedConfig == null)
+            reload();
+        return cachedConfig;
     }
 
-    public double villagerSprintingSpeed(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getDouble("npc.villager-sprinting-speed", 0.7);
+    public int jukeboxMaxDistance() {
+        return getConfig().getInt("jukebox.music-distance", 64);
     }
 
-    public double villagerWalkingSpeed(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getDouble("npc.villager-walk-speed", 0.6);
+    public double villagerSprintingSpeed() {
+        return getConfig().getDouble("npc.villager-sprinting-speed", 0.7);
     }
 
-    public double villagerWorkingTableDisplayOffsetZ(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getDouble("npc.villager-station.text-display.offset-z", 0.5);
+    public double villagerWalkingSpeed() {
+        return getConfig().getDouble("npc.villager-walk-speed", 0.6);
     }
 
-    public double villagerWorkingTableDisplayOffsetY(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getDouble("npc.villager-station.text-display.offset-y", 1.25);
+    public double villagerWorkingTableDisplayOffsetZ() {
+        return getConfig().getDouble("npc.villager-station.text-display.offset-z", 0.5);
     }
 
-    public double villagerWorkingTableDisplayOffsetX(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getDouble("npc.villager-station.text-display.offset-x", 0.5);
+    public double villagerWorkingTableDisplayOffsetY() {
+        return getConfig().getDouble("npc.villager-station.text-display.offset-y", 1.25);
     }
 
-    public int villagerRestockAmount(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getInt("npc.villager-amount-restock", 2);
+    public double villagerWorkingTableDisplayOffsetX() {
+        return getConfig().getDouble("npc.villager-station.text-display.offset-x", 0.5);
     }
 
-    public int villagerWorkingTableSearch(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getInt("npc.villager-search-radius", 48);
+    public int villagerRestockAmount() {
+        return getConfig().getInt("npc.villager-amount-restock", 2);
     }
 
-    public int maxTincutureCauldronLevel(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getInt("items.invisibility-tincture.max-cauldron-level", 3);
+    public int villagerWorkingTableSearch() {
+        return getConfig().getInt("npc.villager-search-radius", 48);
     }
 
-    public int maxTincutureUses(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getInt("items.invisibility-tincture.max-uses", 3);
+    public int maxTincutureCauldronLevel() {
+        return getConfig().getInt("items.invisibility-tincture.max-cauldron-level", 3);
     }
 
-    public boolean disabledEndCrystals(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getBoolean("items.disable-end-crystal", false);
+    public int maxTincutureUses() {
+        return getConfig().getInt("items.invisibility-tincture.max-uses", 3);
     }
 
-    public boolean disabledTNT(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getBoolean("items.disable-tnt", false);
+    public boolean disabledEndCrystals() {
+        return getConfig().getBoolean("items.disable-end-crystal", false);
     }
 
-    public boolean disabledTNTMinecart(){
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(config);
-        return fc.getBoolean("items.disable-tnt-minecart", false);
+    public boolean disabledTNT() {
+        return getConfig().getBoolean("items.disable-tnt", false);
     }
 
-    public JsonObject readJSON(Advancement advancement){
+    public boolean disabledTNTMinecart() {
+        return getConfig().getBoolean("items.disable-tnt-minecart", false);
+    }
+
+    public JsonObject readJSON(Advancement advancement) {
         try {
-            return JsonParser.parseReader(new FileReader(new File(advancementFolder + "//" + advancement.getFileName() + ".json"))).getAsJsonObject();
+            return JsonParser
+                    .parseReader(
+                            new FileReader(new File(advancementFolder + "//" + advancement.getFileName() + ".json")))
+                    .getAsJsonObject();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
